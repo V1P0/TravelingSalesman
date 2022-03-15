@@ -29,9 +29,13 @@ public class MainController implements Initializable {
             public void handle(DragEvent event) {
                 List<File> files = event.getDragboard().getFiles();
                 System.out.println("Got " + files.size() + " files");
-                rand.setText(files.get(0).getAbsolutePath());
+                new DistanceMatrix(files.get(0));
                 event.consume();
             }
         });
+    }
+
+    public void generateRandom(){
+
     }
 }
