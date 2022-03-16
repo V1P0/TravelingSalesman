@@ -4,14 +4,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -25,9 +22,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import helpers.DistanceMatrix;
+import helpers.Euclidean;
 import javafx.stage.Stage;
-
-import javax.tools.Tool;
 
 /**
  * main view controller
@@ -61,23 +57,24 @@ public class MainController implements Initializable {
     /**
      * handles the file passed to the program
      */
-    private void FileHandler(File file){
-        if(file.getName().endsWith(".xml")){
+    private void FileHandler(File file) {
+        if (file.getName().endsWith(".xml")) {
             DistanceMatrix output = new DistanceMatrix(file);
             displayMatrix(output);
-        }else if(file.getName().endsWith(".dm")){
+        } else if (file.getName().endsWith(".dm")) {
             DistanceMatrix output = DistanceMatrix.load(file);
-            if(output != null){
+            if (output != null) {
                 displayMatrix(output);
             }
-        }else{
+        } else {
             System.out.println("wrong file format");
         }
 
     }
 
     public void generateRandomEuclidean() {
-        System.out.println("Euc");
+        Euclidean euc = new Euclidean(1000);
+
     }
 
     public void generateRandomMatrixS() {
@@ -90,19 +87,19 @@ public class MainController implements Initializable {
         displayMatrix(output);
     }
 
-    private void displayMatrix(DistanceMatrix dm){
+    private void displayMatrix(DistanceMatrix dm) {
         Stage stage = new Stage();
         Group group = new Group();
         int size = 800;
-        Scene scene = new Scene(group, size,size);
+        Scene scene = new Scene(group, size, size);
         stage.setScene(scene);
         stage.setTitle("Distance Matrix");
         int sideLength = dm.matrix.length;
-        double offSet = size/(double)sideLength;
+        // double offSet = size / (double) sideLength;
         DecimalFormat df = new DecimalFormat("0.000");
         GridPane gl = new GridPane();
-        for(int i = 0; i<sideLength; i++){
-            for(int j = 0; j<sideLength; j++){
+        for (int i = 0; i < sideLength; i++) {
+            for (int j = 0; j < sideLength; j++) {
                 Label newL = new Label(df.format(dm.matrix[i][j]));
                 newL.setTooltip(new Tooltip(i + " -> " + j));
                 gl.add(newL, i, j);
@@ -124,7 +121,9 @@ public class MainController implements Initializable {
         });
 
         group.setOnScroll(scrollEvent -> {
-            double newScale = group.getScaleX()+scrollEvent.getDeltaY()/80>0 ? group.getScaleX()+scrollEvent.getDeltaY()/80 :0.4;
+            double newScale = group.getScaleX() + scrollEvent.getDeltaY() / 80 > 0
+                    ? group.getScaleX() + scrollEvent.getDeltaY() / 80
+                    : 0.4;
             group.setScaleX(newScale);
             System.out.println(newScale);
             group.setScaleY(newScale);
