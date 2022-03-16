@@ -14,10 +14,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
 public class DistanceMatrix implements TSPdata {
-    double[][] matrix;
+    public double[][] matrix;
     String matrixToString;
+
+    public enum types{
+        SYMMETRIC,
+        ASYMMETRIC;
+    }
 
     public DistanceMatrix(File file) {
         try {
@@ -58,6 +64,39 @@ public class DistanceMatrix implements TSPdata {
             exception.printStackTrace();
         } catch (SAXException e) {
             e.printStackTrace();
+        }
+    }
+    public DistanceMatrix(int size, types type){
+        matrix = new double[size][size];
+        Random rand = new Random();
+        if(type == types.ASYMMETRIC){
+            for(int i = 0; i< matrix.length; i++){
+                for(int j = 0; j< matrix.length; j++){
+                    if(i!=j){
+                        matrix[i][j] = rand.nextDouble();
+                    }else{
+                        matrix[i][j] = -1;
+                    }
+
+                }
+            }
+        }else{
+            for(int i = 0; i< matrix.length; i++){
+                for(int j = i; j< matrix.length; j++){
+                    if(i!=j){
+                        matrix[i][j] = rand.nextDouble();
+                        matrix[j][i] = matrix[i][j];
+                    }else {
+                        matrix[i][j] = -1;
+                    }
+                }
+            }
+        }
+        for(double[] row : matrix){
+            for(double x: row){
+                System.out.print(x + ";");
+            }
+            System.out.println();
         }
     }
 
