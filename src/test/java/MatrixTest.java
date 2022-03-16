@@ -28,11 +28,11 @@ public class MatrixTest {
     }
 
     @Test
-    public void saveTest() throws InterruptedException {
+    public void saveTest() {
         DistanceMatrix dm = new DistanceMatrix(20, DistanceMatrix.types.ASYMMETRIC);
         dm.save("test.dm");
-        DistanceMatrix dm2 = DistanceMatrix.load("test.dm");
         File file = new File("test.dm");
+        DistanceMatrix dm2 = DistanceMatrix.load(file);
         Assert.assertNotNull(dm2);
         for(int i = 0; i<20; i++){
             for(int k = 0; k<20; k++){
@@ -40,5 +40,11 @@ public class MatrixTest {
             }
         }
         file.delete();
+    }
+    @Test
+    public void costTest(){
+        DistanceMatrix dm = new DistanceMatrix(20, DistanceMatrix.types.SYMMETRIC);
+        double sum = dm.matrix[1][3] + dm.matrix[3][6] + dm.matrix[6][8] + dm.matrix[8][1];
+        Assert.assertEquals(sum, dm.cost(1,3,6,8), 0.0);
     }
 }

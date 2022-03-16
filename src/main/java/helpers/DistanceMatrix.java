@@ -110,8 +110,7 @@ public class DistanceMatrix implements TSPdata {
         }
     }
 
-    public static DistanceMatrix load(String fileName){
-        File file = new File(fileName);
+    public static DistanceMatrix load(File file){
         try{
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
             DistanceMatrix dm = (DistanceMatrix) ois.readObject();
@@ -121,6 +120,14 @@ public class DistanceMatrix implements TSPdata {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public double cost(int... path){
+        double sum = 0;
+        for(int i = 0; i< path.length; i++){
+            sum+=matrix[path[i]][path[(i+1)%path.length]];
+        }
+        return sum;
     }
 
     public String getOutput() {

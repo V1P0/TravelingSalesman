@@ -14,4 +14,9 @@ public class Euclidean implements TSPdata {
     public void save(String fileName) {
 
     }
+
+    @Override
+    public double cost(int... path) {
+        return 0;
+    }
 }

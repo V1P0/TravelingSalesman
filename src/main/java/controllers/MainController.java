@@ -41,7 +41,10 @@ public class MainController implements Initializable {
     private void FileHandler(File file){
         if(file.getName().endsWith(".xml")){
             DistanceMatrix output = new DistanceMatrix(file);
-            OutputText.setText(output.getOutput());
+            OutputText.setText(String.valueOf(output.matrix.length));
+        }else if(file.getName().endsWith(".dm")){
+            DistanceMatrix output = DistanceMatrix.load(file);
+            OutputText.setText(String.valueOf(output.matrix.length));
         }else{
             System.out.println("wrong file format");
         }
