@@ -1,3 +1,5 @@
+package helpers;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -11,10 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class DistanceMatrix implements TSPdata{
+public class DistanceMatrix implements TSPdata {
     double[][] matrix;
 
-    public DistanceMatrix(File file){
+    public DistanceMatrix(File file) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -25,25 +27,26 @@ public class DistanceMatrix implements TSPdata{
             int verticies = list.getLength();
 
             matrix = new double[verticies][verticies];
-            for(double[] row : matrix) {
-                //Arrays.fill(row, Double.MAX_VALUE);
+            for (double[] row : matrix) {
+                // Arrays.fill(row, Double.MAX_VALUE);
                 Arrays.fill(row, -1.0);
             }
 
-            for(int row = 0; row < verticies; row++) {
+            for (int row = 0; row < verticies; row++) {
                 Node node = list.item(row);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     NodeList edgeList = node.getChildNodes();
                     int edgeCount = edgeList.getLength();
-                    for(int index = 0; index < edgeCount;index++) {
+                    for (int index = 0; index < edgeCount; index++) {
                         Node checkNode = edgeList.item(index);
                         if (!checkNode.getNodeName().equals("#text")) {
-                            matrix[row][Integer.parseInt(checkNode.getTextContent())] = Double.parseDouble(checkNode.getAttributes().item(0).getNodeValue());
+                            matrix[row][Integer.parseInt(checkNode.getTextContent())] = Double
+                                    .parseDouble(checkNode.getAttributes().item(0).getNodeValue());
                         }
                     }
                 }
             }
-            for(double[] row : matrix) {
+            for (double[] row : matrix) {
                 System.out.println(Arrays.toString(row));
             }
         } catch (ParserConfigurationException e) {

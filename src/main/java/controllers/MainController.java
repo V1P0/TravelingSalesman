@@ -1,3 +1,5 @@
+package controllers;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,10 +13,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import helpers.DistanceMatrix;
+
 public class MainController implements Initializable {
     @FXML
     public Button rand;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -35,7 +38,7 @@ public class MainController implements Initializable {
         });
     }
 
-    public void generateRandom(){
+    public void generateRandom() {
 
     }
 }
