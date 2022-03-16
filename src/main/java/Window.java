@@ -6,6 +6,9 @@ import javafx.stage.Stage;
 
 import helpers.Routes;
 
+/**
+ * main window that also loads fxml file
+ */
 public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {

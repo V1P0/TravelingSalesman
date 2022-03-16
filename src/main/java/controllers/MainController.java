@@ -16,12 +16,18 @@ import java.util.ResourceBundle;
 
 import helpers.DistanceMatrix;
 
+/**
+ * main view controller
+ */
 public class MainController implements Initializable {
     @FXML
     public Button rand;
     @FXML
     public Text OutputText;
 
+    /**
+     * initializes drag and drop function for button
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         rand.setOnDragOver((EventHandler<Event>) event -> {
@@ -38,6 +44,9 @@ public class MainController implements Initializable {
         });
     }
 
+    /**
+     * handles the file passed to the program
+     */
     private void FileHandler(File file){
         if(file.getName().endsWith(".xml")){
             DistanceMatrix output = new DistanceMatrix(file);

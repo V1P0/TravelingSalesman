@@ -15,15 +15,28 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Travelling salesman problem in the form of a distance matrix
+ */
 public class DistanceMatrix implements TSPdata {
+    /**
+     * matrix itself
+     */
     public double[][] matrix;
     String matrixToString;
 
+    /**
+     * enum for creating random distance matrix
+     */
     public enum types{
         SYMMETRIC,
         ASYMMETRIC;
     }
 
+    /**
+     * loading distance matrix from a xml file
+     * @param file xml file
+     */
     public DistanceMatrix(File file) {
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -65,6 +78,10 @@ public class DistanceMatrix implements TSPdata {
             e.printStackTrace();
         }
     }
+
+    /**
+     * generates a random distance matrix of a given type
+     */
     public DistanceMatrix(int size, types type){
         matrix = new double[size][size];
         Random rand = new Random();
@@ -99,6 +116,11 @@ public class DistanceMatrix implements TSPdata {
         }
     }
 
+    /**
+     * saves the problem as a file using standard java serialization
+     * the file should end with .dm extension
+     * @param fileName
+     */
     public void save(String fileName){
         File newFile = new File(fileName);
         try {
@@ -110,6 +132,11 @@ public class DistanceMatrix implements TSPdata {
         }
     }
 
+    /**
+     * loads the problem from a file with saved using standard java serialization
+     * @param file
+     * @return
+     */
     public static DistanceMatrix load(File file){
         try{
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
@@ -122,6 +149,11 @@ public class DistanceMatrix implements TSPdata {
         return null;
     }
 
+    /**
+     * calculates the cost to travel over given path
+     * @param path ex 1, 6, 3, 5, 4
+     * @return calculated cost
+     */
     public double cost(int... path){
         double sum = 0;
         for(int i = 0; i< path.length; i++){

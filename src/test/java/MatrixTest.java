@@ -4,7 +4,9 @@ import org.junit.Assert;
 
 import java.io.File;
 
-
+/**
+ * tests of basic distance matrix functionalities
+ */
 public class MatrixTest {
     @Test
     public void asymmetricTest(){
