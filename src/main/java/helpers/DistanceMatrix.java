@@ -70,11 +70,7 @@ public class DistanceMatrix implements TSPdata {
             for (double[] row : matrix) {
                 matrixToString += Arrays.toString(row);
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
     }
