@@ -2,6 +2,9 @@ import helpers.DistanceMatrix;
 import org.junit.Test;
 import org.junit.Assert;
 
+import java.io.File;
+
+
 public class MatrixTest {
     @Test
     public void asymmetricTest(){
@@ -22,5 +25,20 @@ public class MatrixTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void saveTest() throws InterruptedException {
+        DistanceMatrix dm = new DistanceMatrix(20, DistanceMatrix.types.ASYMMETRIC);
+        dm.save("test.dm");
+        DistanceMatrix dm2 = DistanceMatrix.load("test.dm");
+        File file = new File("test.dm");
+        Assert.assertNotNull(dm2);
+        for(int i = 0; i<20; i++){
+            for(int k = 0; k<20; k++){
+                Assert.assertEquals(dm.matrix[i][k], dm2.matrix[i][k], 0.0);
+            }
+        }
+        file.delete();
     }
 }

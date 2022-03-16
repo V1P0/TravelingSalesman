@@ -31,16 +31,21 @@ public class MainController implements Initializable {
             }
             event.consume();
         });
-        rand.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                List<File> files = event.getDragboard().getFiles();
-                System.out.println("Got " + files.size() + " files");
-                DistanceMatrix output = new DistanceMatrix(files.get(0));
-
-                OutputText.setText(output.getOutput());
-                event.consume();
-            }
+        rand.setOnDragDropped(event -> {
+            List<File> files = event.getDragboard().getFiles();
+            FileHandler(files.get(0));
+            event.consume();
         });
+    }
+
+    private void FileHandler(File file){
+        if(file.getName().endsWith(".xml")){
+            DistanceMatrix output = new DistanceMatrix(file);
+            OutputText.setText(output.getOutput());
+        }else{
+            System.out.println("wrong file format");
+        }
+
     }
 
     public void generateRandom() {

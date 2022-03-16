@@ -11,8 +11,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -98,6 +97,30 @@ public class DistanceMatrix implements TSPdata {
             }
             System.out.println();
         }
+    }
+
+    public void save(String fileName){
+        File newFile = new File(fileName);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(newFile));
+            oos.writeObject(this);
+            oos.close();
+        }catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public static DistanceMatrix load(String fileName){
+        File file = new File(fileName);
+        try{
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            DistanceMatrix dm = (DistanceMatrix) ois.readObject();
+            ois.close();
+            return dm;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getOutput() {

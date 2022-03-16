@@ -9,4 +9,9 @@ public class Euclidean implements TSPdata {
     public Euclidean(int n) {
         points = new Point2D[n];
     }
+
+    @Override
+    public void save(String fileName) {
+
+    }
 }
