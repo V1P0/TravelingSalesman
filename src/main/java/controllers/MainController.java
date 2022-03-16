@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.text.Text;
 
 import java.io.File;
 import java.net.URL;
@@ -18,6 +19,8 @@ import helpers.DistanceMatrix;
 public class MainController implements Initializable {
     @FXML
     public Button rand;
+    @FXML
+    public Text OutputText;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -32,7 +35,9 @@ public class MainController implements Initializable {
             public void handle(DragEvent event) {
                 List<File> files = event.getDragboard().getFiles();
                 System.out.println("Got " + files.size() + " files");
-                new DistanceMatrix(files.get(0));
+                DistanceMatrix output = new DistanceMatrix(files.get(0));
+
+                OutputText.setText(output.getOutput());
                 event.consume();
             }
         });

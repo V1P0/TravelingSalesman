@@ -11,7 +11,7 @@ public class Window extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(Routes.viewsRoute("MainView.fxml"));
         stage.setTitle("TSP");
-        stage.setScene(new Scene(root, 800, 600));
+        stage.setScene(new Scene(root, 600, 400));
         stage.show();
     }
 

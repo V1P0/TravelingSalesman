@@ -5,6 +5,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import types.TSPdata;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +17,7 @@ import java.util.Arrays;
 
 public class DistanceMatrix implements TSPdata {
     double[][] matrix;
+    String matrixToString;
 
     public DistanceMatrix(File file) {
         try {
@@ -47,7 +50,7 @@ public class DistanceMatrix implements TSPdata {
                 }
             }
             for (double[] row : matrix) {
-                System.out.println(Arrays.toString(row));
+                matrixToString += Arrays.toString(row);
             }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -56,6 +59,10 @@ public class DistanceMatrix implements TSPdata {
         } catch (SAXException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getOutput() {
+        return this.matrixToString;
     }
 
 }
