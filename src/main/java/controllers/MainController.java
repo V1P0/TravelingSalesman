@@ -7,17 +7,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.chart.Chart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 import java.awt.*;
@@ -80,7 +79,6 @@ public class MainController implements Initializable {
 
     public void generateRandomEuclidean() {
         Euclidean euc = new Euclidean(1000);
-        euc.cost(1, 3, 5, 9);
         displayEuclidean(euc);
 
     }
@@ -142,28 +140,44 @@ public class MainController implements Initializable {
     private void displayEuclidean(Euclidean euc) {
 
         Point2D[] points = euc.getPoints(1, 3, 6, 7);
-        Circle[] pointsToDisaply = new Circle[points.length];
+        // double cost = euc.cost(1, 3, 6, 7);
+        // double[] costs = euc.costs;
+        Label labe = new Label("Total cost: " + euc.cost(1, 3, 6, 7));
 
+        Circle[] pointsToDisaply = new Circle[points.length];
         for (int i = 0; i < points.length; i++) {
-            Circle circle = new Circle(points[i].getX(), points[i].getY(), 5);
+            Circle circle = new Circle(points[i].getX(), points[i].getY(), 3);
             pointsToDisaply[i] = circle;
         }
 
         // Creating a Group object
-        Group root = new Group(pointsToDisaply);
+        Group root = new Group();
+        root.getChildren().addAll(pointsToDisaply);
+        root.getChildren().add(labe);
+
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
+                Line line = new Line(points[i].getX(), points[i].getY(), points[j].getX(), points[j].getY());
+                line.setStrokeWidth(2);
+                root.getChildren().add(line);
+                line.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                        event -> labe.setText("Cost this line is: " + new Point2D(line.getStartX(), line.getStartY())
+                                .distance(line.getEndX(), line.getEndY())));
+                line.addEventHandler(MouseEvent.MOUSE_EXITED,
+                        event -> labe.setText("Total cost: " + euc.cost(1, 3, 6, 7)));
+            }
+        }
 
         // Creating a scene object
         Scene scene = new Scene(root, 1000, 1000);
-
         Stage stage = new Stage();
         // Setting title to the Stage
         stage.setTitle("Line Chart");
-
         // Adding scene to the stage
         stage.setScene(scene);
-
         // Displaying the contents of the stage
         stage.show();
 
     }
+
 }
