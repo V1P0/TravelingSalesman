@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Random;
 
+import javafx.geometry.Point2D;
+
 public class Euclidean implements TSPdata {
     double[] xPoints;
     double[] yPoints;
@@ -50,7 +52,24 @@ public class Euclidean implements TSPdata {
 
     @Override
     public double cost(int... path) {
+        for (int i = 0; i < path.length; i++) {
+            Point2D point = new Point2D(xPoints[path[i]], yPoints[path[i]]);
+            System.out.println("Point: " + point);
+            for (int j = i + 1; j < path.length; j++) {
+                System.out.println("Cost: " + point.distance(xPoints[path[j]], yPoints[path[j]]));
+            }
+        }
+
         return 0;
+    }
+
+    public Point2D[] getPoints(int... path) {
+        Point2D[] retPoints = new Point2D[path.length];
+        for (int i = 0; i < path.length; i++) {
+            retPoints[i] = new Point2D(xPoints[path[i]], yPoints[path[i]]);
+        }
+
+        return retPoints;
     }
 
     // !TODO:
