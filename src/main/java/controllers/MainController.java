@@ -169,7 +169,7 @@ public class MainController implements Initializable {
         }
 
         // Creating a scene object
-        Scene scene = new Scene(root, 1000, 1000);
+        Scene scene = new Scene(root, 500, 500);
         Stage stage = new Stage();
         // Setting title to the Stage
         stage.setTitle("Line Chart");

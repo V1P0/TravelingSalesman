@@ -22,8 +22,8 @@ public class Euclidean implements TSPdata {
         xPoints = new double[n];
         yPoints = new double[n];
         for (int i = 0; i < n; i++) {
-            xPoints[i] = rand.nextInt(1000);
-            yPoints[i] = rand.nextInt(1000);
+            xPoints[i] = rand.nextInt(500);
+            yPoints[i] = rand.nextInt(500);
         }
     }
 
@@ -72,10 +72,5 @@ public class Euclidean implements TSPdata {
 
         return retPoints;
     }
-
-    // !TODO:
-    // Liczymy koszty dla podanych liczb, gdzie koszt to odleglosc miedzy tymi
-    // punktami, wszystkimi i zwracamy sume
-    // I wyswietlanie jakies fajnie ezez. Wyseitlanei punktow
 
 }
