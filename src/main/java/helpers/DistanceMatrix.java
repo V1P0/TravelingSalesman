@@ -12,8 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Travelling salesman problem in the form of a distance matrix
@@ -158,6 +157,138 @@ public class DistanceMatrix implements TSPdata {
         return sum;
     }
 
+    public double cost(List<Integer> path){
+        double sum = 0;
+        for(int i = 0; i< path.size(); i++){
+            sum+=matrix[path.get(i)][path.get((i+1)%path.size())];
+        }
+        return sum;
+    }
+
+    public List<Integer> kRandom(int k) {
+        ArrayList<Integer> arr = new ArrayList<>();
+        for(int i = 0; i<matrix.length; i++){
+            arr.add(i);
+        }
+        ArrayList<Integer> res = new ArrayList<>(arr);
+        double cost = Double.MAX_VALUE;
+        for(int i = 0; i<k; i++){
+            Collections.shuffle(arr);
+            double newCost = cost(arr);
+            if(newCost < cost){
+                cost = newCost;
+                res = new ArrayList<>(arr);
+            }
+        }
+        return res;
+    }
+
+    public List<Integer> nearest(){
+        final List<List<Integer>> bests = new LinkedList<>();
+        Thread[] fredy = new Thread[matrix.length];
+        for(int i = 0; i<matrix.length; i++){
+            int finalI = i;
+            fredy[i] = new Thread(()-> {
+                List<Integer> foo = nearest(finalI);
+                synchronized (bests){
+                    bests.add(foo);
+                }
+            });
+        }
+        for(Thread x: fredy){
+            x.start();
+        }
+        try{
+            for(Thread x: fredy){
+                x.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<Integer> res = new ArrayList<>();
+        double cost = Double.MAX_VALUE;
+        for(int i = 0; i< matrix.length; i++){
+            double newCost = cost(bests.get(i));
+            if(newCost < cost){
+                cost = newCost;
+                res = bests.get(i);
+            }
+        }
+        return res;
+    }
+
+    public List<Integer> nearest(int start){
+        List<Integer> result = new ArrayList<>();
+        result.add(start);
+        for(int i = 0; i<matrix.length-1;i++){
+            int k = nearest(start, result);
+            result.add(k);
+        }
+        return result;
+    }
+
+    private int nearest(int k, List<Integer> visited){
+        double cost = Double.MAX_VALUE;
+        int ret = 12;
+        for(int i = 0; i<matrix.length; i++){
+            if(visited.contains(i) || i == k) continue;
+            if(cost > matrix[k][i]){
+                cost = matrix[k][i];
+                ret = i;
+            }
+        }
+        return ret;
+    }
+
+    public List<Integer> twoOptAcc(List<Integer> start){
+        for(int n = 0; n< matrix.length; n++){
+            for(int m = n+1; m< matrix.length; m++){
+                List<Integer> candidate = new ArrayList<>(start);
+                reversePart(candidate, n, m);
+                int nn = ((n-1)+ matrix.length)% matrix.length;
+                int mm = (m+1)% matrix.length;
+                if(matrix[start.get(nn)][start.get(n)] + matrix[start.get(m)][start.get(mm)] >
+                        matrix[candidate.get(nn)][candidate.get(n)] + matrix[candidate.get(m)][candidate.get(mm)]){
+                    start = candidate;
+                    n = -1;
+                    break;
+                }
+            }
+        }
+        return start;
+    }
+
+    public List<Integer> twoOpt(List<Integer> start){
+        for(int n = 0; n< matrix.length; n++){
+            for(int m = n+1; m< matrix.length; m++){
+                List<Integer> candidate = new ArrayList<>(start);
+                reversePart(candidate, n, m);
+                if(cost(start) > cost(candidate)){
+                    start = candidate;
+                    n = -1;
+                    break;
+                }
+            }
+        }
+        return start;
+    }
+
+    private void reversePart(List<Integer> list, int n, int k){
+        while(k>n){
+            Collections.swap(list, n, k);
+            n++;
+            k--;
+        }
+    }
+
+    public boolean isSymmetric(){
+        for(int i = 0; i< matrix.length; i++){
+            for(int j = 0; j< matrix.length; j++){
+                if(matrix[i][j] != matrix[j][i]) return false;
+            }
+        }
+        return true;
+    }
     public String getOutput() {
         return this.matrixToString;
     }
