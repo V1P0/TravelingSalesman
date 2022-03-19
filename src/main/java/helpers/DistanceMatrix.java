@@ -21,7 +21,7 @@ public class DistanceMatrix implements TSPdata {
     /**
      * matrix itself
      */
-    public double[][] matrix;
+    public int[][] matrix;
     String matrixToString;
 
     /**
@@ -46,10 +46,10 @@ public class DistanceMatrix implements TSPdata {
             NodeList list = doc.getElementsByTagName("vertex");
             int verticies = list.getLength();
 
-            matrix = new double[verticies][verticies];
-            for (double[] row : matrix) {
+            matrix = new int[verticies][verticies];
+            for (int[] row : matrix) {
                 // Arrays.fill(row, Double.MAX_VALUE);
-                Arrays.fill(row, -1.0);
+                Arrays.fill(row, -1);
             }
 
             for (int row = 0; row < verticies; row++) {
@@ -60,13 +60,13 @@ public class DistanceMatrix implements TSPdata {
                     for (int index = 0; index < edgeCount; index++) {
                         Node checkNode = edgeList.item(index);
                         if (!checkNode.getNodeName().equals("#text")) {
-                            matrix[row][Integer.parseInt(checkNode.getTextContent())] = Double
-                                    .parseDouble(checkNode.getAttributes().item(0).getNodeValue());
+                            matrix[row][Integer.parseInt(checkNode.getTextContent())] = (int)(Double
+                                    .parseDouble(checkNode.getAttributes().item(0).getNodeValue())+0.5);
                         }
                     }
                 }
             }
-            for (double[] row : matrix) {
+            for (int[] row : matrix) {
                 matrixToString += Arrays.toString(row);
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
@@ -78,13 +78,13 @@ public class DistanceMatrix implements TSPdata {
      * generates a random distance matrix of a given type
      */
     public DistanceMatrix(int size, types type){
-        matrix = new double[size][size];
+        matrix = new int[size][size];
         Random rand = new Random();
         if(type == types.ASYMMETRIC){
             for(int i = 0; i< matrix.length; i++){
                 for(int j = 0; j< matrix.length; j++){
                     if(i!=j){
-                        matrix[i][j] = rand.nextDouble();
+                        matrix[i][j] = rand.nextInt();
                     }else{
                         matrix[i][j] = -1;
                     }
@@ -95,7 +95,7 @@ public class DistanceMatrix implements TSPdata {
             for(int i = 0; i< matrix.length; i++){
                 for(int j = i; j< matrix.length; j++){
                     if(i!=j){
-                        matrix[i][j] = rand.nextDouble();
+                        matrix[i][j] = rand.nextInt();
                         matrix[j][i] = matrix[i][j];
                     }else {
                         matrix[i][j] = -1;
@@ -103,7 +103,7 @@ public class DistanceMatrix implements TSPdata {
                 }
             }
         }
-        for(double[] row : matrix){
+        for(int[] row : matrix){
             for(double x: row){
                 System.out.print(x + ";");
             }
@@ -241,24 +241,30 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> twoOptAcc(List<Integer> start){
+        int k = 0;//
         for(int n = 0; n< matrix.length; n++){
             for(int m = n+1; m< matrix.length; m++){
                 List<Integer> candidate = new ArrayList<>(start);
                 reversePart(candidate, n, m);
                 int nn = ((n-1)+ matrix.length)% matrix.length;
                 int mm = (m+1)% matrix.length;
-                if(matrix[start.get(nn)][start.get(n)] + matrix[start.get(m)][start.get(mm)] >
-                        matrix[candidate.get(nn)][candidate.get(n)] + matrix[candidate.get(m)][candidate.get(mm)]){
+                boolean skip = matrix[start.get(nn)][start.get(n)] + matrix[start.get(m)][start.get(mm)] >
+                        matrix[candidate.get(nn)][candidate.get(n)] + matrix[candidate.get(m)][candidate.get(mm)];
+                //System.out.println(skip == (cost(start) > cost(candidate)));
+                if(skip){
                     start = candidate;
+                    k++;//
                     n = -1;
                     break;
                 }
             }
         }
+        System.out.println("k = " + k);//
         return start;
     }
 
     public List<Integer> twoOpt(List<Integer> start){
+        int k = 0;
         for(int n = 0; n< matrix.length; n++){
             for(int m = n+1; m< matrix.length; m++){
                 List<Integer> candidate = new ArrayList<>(start);
@@ -266,10 +272,12 @@ public class DistanceMatrix implements TSPdata {
                 if(cost(start) > cost(candidate)){
                     start = candidate;
                     n = -1;
+                    k++;
                     break;
                 }
             }
         }
+        System.out.println("k = " + k);
         return start;
     }
 

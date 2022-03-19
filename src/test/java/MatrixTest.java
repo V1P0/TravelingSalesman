@@ -53,9 +53,8 @@ public class MatrixTest {
     }
     @Test
     public void myTest(){
-        File file = new File("C:\\Users\\oem\\Desktop\\Berlin52.xml");
+        File file = new File("C:\\Users\\oem\\Desktop\\berlin52.xml");
         DistanceMatrix dm = new DistanceMatrix(file);
-        Assert.assertEquals(dm.matrix.length, 52);
         List<Integer> res = dm.nearest();
         System.out.println(res.size());
         System.out.println(res);
@@ -75,6 +74,6 @@ public class MatrixTest {
         }
         System.out.println("opt time = " + (time2-time1));
         System.out.println("optA time = " + (time4-time3));
-        System.out.println("optA faster by - "+ ((time2-time1) - (time4-time3)));
+        System.out.println("optA faster by -> "+ ((time2-time1) - (time4-time3)));
     }
 }
