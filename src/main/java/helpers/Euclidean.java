@@ -52,8 +52,8 @@ public class Euclidean implements TSPdata {
     }
 
     @Override
-    public double cost(int... path) {
-        double sum = 0;
+    public long cost(int... path) {
+        int sum = 0;
         for (int i = 0; i < path.length; i++) {
             Point2D point = new Point2D(xPoints[path[i]], yPoints[path[i]]);
             for (int j = i + 1; j < path.length; j++) {

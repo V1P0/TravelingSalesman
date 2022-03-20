@@ -149,16 +149,16 @@ public class DistanceMatrix implements TSPdata {
      * @param path ex 1, 6, 3, 5, 4
      * @return calculated cost
      */
-    public double cost(int... path){
-        double sum = 0;
+    public long cost(int... path){
+        long sum = 0;
         for(int i = 0; i< path.length; i++){
             sum+=matrix[path[i]][path[(i+1)%path.length]];
         }
         return sum;
     }
 
-    public double cost(List<Integer> path){
-        double sum = 0;
+    public long cost(List<Integer> path){
+        long sum = 0;
         for(int i = 0; i< path.size(); i++){
             sum+=matrix[path.get(i)][path.get((i+1)%path.size())];
         }
@@ -178,6 +178,44 @@ public class DistanceMatrix implements TSPdata {
             if(newCost < cost){
                 cost = newCost;
                 res = new ArrayList<>(arr);
+            }
+        }
+        return res;
+    }
+
+    public List<Integer> kRandomThreaded(int k){
+        final List<List<Integer>> bests = new LinkedList<>();
+        ArrayList<Integer> arr = new ArrayList<>();
+        for(int i = 0; i<matrix.length; i++){
+            arr.add(i);
+        }
+        Thread[] fredy = new Thread[k];
+        for(int i = 0; i<k; i++){
+            fredy[i] = new Thread(()-> {
+                List<Integer> foo = new ArrayList<>(arr);
+                Collections.shuffle(foo);
+                synchronized (bests){
+                    bests.add(foo);
+                }
+            });
+        }
+        for(Thread x: fredy){
+            x.start();
+        }
+        try{
+            for(Thread x: fredy){
+                x.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<Integer> res = new ArrayList<>();
+        double cost = Double.MAX_VALUE;
+        for(int i = 0; i< k; i++){
+            double newCost = cost(bests.get(i));
+            if(newCost < cost){
+                cost = newCost;
+                res = bests.get(i);
             }
         }
         return res;
@@ -241,30 +279,24 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> twoOptAcc(List<Integer> start){
-        int k = 0;//
         for(int n = 0; n< matrix.length; n++){
             for(int m = n+1; m< matrix.length; m++){
-                List<Integer> candidate = new ArrayList<>(start);
-                reversePart(candidate, n, m);
-                int nn = ((n-1)+ matrix.length)% matrix.length;
                 int mm = (m+1)% matrix.length;
+                if(n == mm) continue;
+                int nn = ((n-1)+ matrix.length)% matrix.length;
                 boolean skip = matrix[start.get(nn)][start.get(n)] + matrix[start.get(m)][start.get(mm)] >
-                        matrix[candidate.get(nn)][candidate.get(n)] + matrix[candidate.get(m)][candidate.get(mm)];
-                //System.out.println(skip == (cost(start) > cost(candidate)));
+                        matrix[start.get(nn)][start.get(m)] + matrix[start.get(n)][start.get(mm)];
                 if(skip){
-                    start = candidate;
-                    k++;//
+                    reversePart(start, n, m);
                     n = -1;
                     break;
                 }
             }
         }
-        System.out.println("k = " + k);//
         return start;
     }
 
     public List<Integer> twoOpt(List<Integer> start){
-        int k = 0;
         for(int n = 0; n< matrix.length; n++){
             for(int m = n+1; m< matrix.length; m++){
                 List<Integer> candidate = new ArrayList<>(start);
@@ -272,13 +304,31 @@ public class DistanceMatrix implements TSPdata {
                 if(cost(start) > cost(candidate)){
                     start = candidate;
                     n = -1;
-                    k++;
                     break;
                 }
             }
         }
-        System.out.println("k = " + k);
         return start;
+    }
+
+    public List<Integer> threeOpt(List<Integer> start){
+        List<Integer> tour = new ArrayList<>(start);
+        for(int i = 1; i< matrix.length; i++){
+            for(int j = i+1; j< matrix.length; j++){
+                for(int k = j+1; k< matrix.length; k++){
+                    List<Integer> candidate = new ArrayList<>(tour);
+                    reversePart(candidate, i, k);
+                    reversePart(candidate, j, k);
+                    if(cost(candidate) < cost(tour)){
+                        tour = candidate;
+                        i = 1;
+                        j = 2;
+                        k = 2;
+                    }
+                }
+            }
+        }
+        return tour;
     }
 
     private void reversePart(List<Integer> list, int n, int k){
@@ -297,6 +347,7 @@ public class DistanceMatrix implements TSPdata {
         }
         return true;
     }
+
     public String getOutput() {
         return this.matrixToString;
     }

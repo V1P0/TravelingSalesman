@@ -51,11 +51,12 @@ public class MatrixTest {
         double sum = dm.matrix[1][3] + dm.matrix[3][6] + dm.matrix[6][8] + dm.matrix[8][1];
         Assert.assertEquals(sum, dm.cost(1,3,6,8), 0.0);
     }
+    //TODO drzewka w najbliższym sąsiedzie
     @Test
     public void myTest(){
-        File file = new File("C:\\Users\\oem\\Desktop\\berlin52.xml");
+        File file = new File("C:\\Users\\oem\\Desktop\\a280.xml");
         DistanceMatrix dm = new DistanceMatrix(file);
-        List<Integer> res = dm.nearest();
+        List<Integer> res = dm.kRandomThreaded(40);
         System.out.println(res.size());
         System.out.println(res);
         System.out.println(dm.cost(res));
@@ -69,11 +70,24 @@ public class MatrixTest {
         long time4 = System.nanoTime();
         System.out.println(optA);
         System.out.println(dm.cost(optA));
-        if (opt.equals(optA)) {
-            System.out.println("success");
-        }
         System.out.println("opt time = " + (time2-time1));
         System.out.println("optA time = " + (time4-time3));
-        System.out.println("optA faster by -> "+ ((time2-time1) - (time4-time3)));
+        System.out.println("Accelerated opt faster "+ ((time2-time1)/(time4-time3))+" times");
+    }
+
+    @Test
+    public void ThreeOptTest(){
+        File file = new File("C:\\Users\\oem\\Desktop\\a280.xml");
+        DistanceMatrix dm = new DistanceMatrix(file);
+        List<Integer> res = dm.nearest();
+        System.out.println(res);
+        System.out.println(dm.cost(res));
+        res = dm.twoOptAcc(res);
+        System.out.println(res);
+        System.out.println(dm.cost(res));
+        List<Integer> topt = dm.threeOpt(res);
+        System.out.println(topt);
+        System.out.println(dm.cost(topt));
+        topt = dm.twoOptAcc(topt);
     }
 }
