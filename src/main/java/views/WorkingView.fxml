@@ -32,16 +32,17 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.WorkingController">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
+    <MenuBar style="-fx-view-order: 9;" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -51,15 +52,15 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Algorithms">
           <items>
-            <MenuItem mnemonicParsing="false" text="K-Random" />
-            <MenuItem mnemonicParsing="false" text="K-Random Threaded" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="K-Random" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="K-Random Threaded" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="nearest" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="nearest" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="2-opt" />
-            <MenuItem mnemonicParsing="false" text="2-opt Acc" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="2-opt" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="2-opt Acc" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="3-opt" />
+            <MenuItem mnemonicParsing="false" onAction="#generateLines" text="3-opt" />
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Generate">
@@ -72,6 +73,7 @@
             </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane fx:id="surface" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+      <Label fx:id="Label" textAlignment="CENTER" />
+      <Pane fx:id="surface" prefHeight="200.0" prefWidth="200.0" />
   </children>
 </VBox>
