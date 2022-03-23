@@ -104,12 +104,7 @@ public class DistanceMatrix implements TSPdata {
                 }
             }
         }
-        for (int[] row : matrix) {
-            for (double x : row) {
-                System.out.print(x + ";");
-            }
-            System.out.println();
-        }
+
     }
 
     /**
