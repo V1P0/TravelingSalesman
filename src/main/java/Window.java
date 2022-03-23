@@ -12,9 +12,9 @@ import helpers.Routes;
 public class Window extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(Routes.viewsRoute("MainView.fxml"));
+        Parent root = FXMLLoader.load(Routes.viewsRoute("WorkingView.fxml"));
         stage.setTitle("TSP");
-        stage.setScene(new Scene(root, 600, 400));
+        stage.setScene(new Scene(root, 1000, 700));
         stage.show();
     }
 

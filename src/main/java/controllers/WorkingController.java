@@ -1,25 +1,55 @@
 package controllers;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import helpers.Euclidean;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
+import java.awt.*;
+import java.io.File;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import helpers.DistanceMatrix;
+import helpers.Euclidean;
+
 public class WorkingController implements Initializable {
+
+    @FXML
+    public AnchorPane surface;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
+        surface.setOnDragOver((EventHandler<Event>) event -> {
+            DragEvent devent = (DragEvent) event;
+            if (devent.getDragboard().hasFiles()) {
+                devent.acceptTransferModes(TransferMode.ANY);
+            }
+            event.consume();
+        });
+        surface.setOnDragDropped(event -> {
+            List<File> files = event.getDragboard().getFiles();
+            FileHandler(files.get(0));
+            event.consume();
+        });
     }
 
     public void generateRandomEuclidean() {
+        surface.getChildren().clear();
         Euclidean euc = new Euclidean(1000);
         displayEuclidean(euc);
     }
@@ -53,16 +83,76 @@ public class WorkingController implements Initializable {
             }
         }
 
-        // // Creating a scene object
-        // Scene scene = new Scene(root, 500, 500);
-
-        // // Setting title to the Stage
-        // stage.setTitle("Line Chart");
-        // // Adding scene to the stage
-        // stage.setScene(scene);
-        // // Displaying the contents of the stage
-        // stage.show();
+        surface.getChildren().add(root);
 
     }
 
+    /**
+     * handles the file passed to the program
+     */
+    private void FileHandler(File file) {
+        if (file.getName().endsWith(".xml")) {
+            DistanceMatrix output = new DistanceMatrix(file);
+            displayMatrix(output);
+        } else if (file.getName().endsWith(".dm")) {
+            DistanceMatrix output = DistanceMatrix.load(file);
+            if (output != null) {
+                displayMatrix(output);
+            }
+        } else {
+            System.out.println("wrong file format");
+        }
+
+    }
+
+    public void generateRandomMatrixS() {
+        surface.getChildren().clear();
+        DistanceMatrix output = new DistanceMatrix(20, DistanceMatrix.types.SYMMETRIC);
+        displayMatrix(output);
+    }
+
+    public void generateRandomMatrixAS() {
+        surface.getChildren().clear();
+        DistanceMatrix output = new DistanceMatrix(20, DistanceMatrix.types.ASYMMETRIC);
+        displayMatrix(output);
+    }
+
+    private void displayMatrix(DistanceMatrix dm) {
+        Group group = new Group();
+        int sideLength = dm.matrix.length;
+        // double offSet = size / (double) sideLength;
+        DecimalFormat df = new DecimalFormat("0.000");
+        GridPane gl = new GridPane();
+        for (int i = 0; i < sideLength; i++) {
+            for (int j = 0; j < sideLength; j++) {
+                Label newL = new Label(df.format(dm.matrix[i][j]));
+                newL.setTooltip(new Tooltip(i + " -> " + j));
+                gl.add(newL, i, j);
+            }
+        }
+        gl.setHgap(5);
+        gl.setVgap(5);
+        group.getChildren().add(gl);
+        final Point delta = new Point();
+        group.setOnMousePressed(mouseEvent -> {
+            // record a delta distance for the drag and drop operation.
+            delta.x = (int) (group.getLayoutX() - mouseEvent.getSceneX());
+            delta.y = (int) (group.getLayoutY() - mouseEvent.getSceneY());
+        });
+
+        group.setOnMouseDragged(mouseEvent -> {
+            group.setLayoutX(mouseEvent.getSceneX() + delta.x);
+            group.setLayoutY(mouseEvent.getSceneY() + delta.y);
+        });
+
+        group.setOnScroll(scrollEvent -> {
+            double newScale = group.getScaleX() + scrollEvent.getDeltaY() / 80 > 0
+                    ? group.getScaleX() + scrollEvent.getDeltaY() / 80
+                    : 0.4;
+            group.setScaleX(newScale);
+            System.out.println(newScale);
+            group.setScaleY(newScale);
+        });
+        surface.getChildren().add(group);
+    }
 }
