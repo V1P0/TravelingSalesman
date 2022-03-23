@@ -51,7 +51,6 @@ public class Euclidean implements TSPdata {
         return null;
     }
 
-    @Override
     public long cost(int... path) {
         int sum = 0;
         for (int i = 0; i < path.length; i++) {

@@ -3,31 +3,31 @@ package controllers;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import helpers.DistanceMatrix;
-import helpers.Euclidean;
+import helpers.Routes;
 import javafx.stage.Stage;
 
 /**
@@ -39,6 +39,8 @@ public class MainController implements Initializable {
     public Text OutputText;
     @FXML
     public AnchorPane background;
+    @FXML
+    public Button euclidian;
 
     /**
      * initializes drag and drop function for button
@@ -59,6 +61,19 @@ public class MainController implements Initializable {
         });
     }
 
+    @FXML
+    private void displayEuclidean() throws IOException {
+        Stage stage;
+        Parent root;
+
+        stage = (Stage) euclidian.getScene().getWindow();
+        root = FXMLLoader.load(Routes.viewsRoute("WorkingView.fxml"));
+        Scene scene = new Scene(root, 800, 600);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
     /**
      * handles the file passed to the program
      */
@@ -74,12 +89,6 @@ public class MainController implements Initializable {
         } else {
             System.out.println("wrong file format");
         }
-
-    }
-
-    public void generateRandomEuclidean() {
-        Euclidean euc = new Euclidean(1000);
-        displayEuclidean(euc);
 
     }
 
@@ -135,49 +144,6 @@ public class MainController implements Initializable {
             group.setScaleY(newScale);
         });
         stage.show();
-    }
-
-    private void displayEuclidean(Euclidean euc) {
-
-        Point2D[] points = euc.getPoints(1, 3, 6, 7);
-        // double cost = euc.cost(1, 3, 6, 7);
-        // double[] costs = euc.costs;
-        Label labe = new Label("Total cost: " + euc.cost(1, 3, 6, 7));
-
-        Circle[] pointsToDisaply = new Circle[points.length];
-        for (int i = 0; i < points.length; i++) {
-            Circle circle = new Circle(points[i].getX(), points[i].getY(), 3);
-            pointsToDisaply[i] = circle;
-        }
-
-        // Creating a Group object
-        Group root = new Group();
-        root.getChildren().addAll(pointsToDisaply);
-        root.getChildren().add(labe);
-
-        for (int i = 0; i < points.length; i++) {
-            for (int j = 0; j < points.length; j++) {
-                Line line = new Line(points[i].getX(), points[i].getY(), points[j].getX(), points[j].getY());
-                line.setStrokeWidth(2);
-                root.getChildren().add(line);
-                line.addEventHandler(MouseEvent.MOUSE_ENTERED,
-                        event -> labe.setText("Cost this line is: " + new Point2D(line.getStartX(), line.getStartY())
-                                .distance(line.getEndX(), line.getEndY())));
-                line.addEventHandler(MouseEvent.MOUSE_EXITED,
-                        event -> labe.setText("Total cost: " + euc.cost(1, 3, 6, 7)));
-            }
-        }
-
-        // Creating a scene object
-        Scene scene = new Scene(root, 500, 500);
-        Stage stage = new Stage();
-        // Setting title to the Stage
-        stage.setTitle("Line Chart");
-        // Adding scene to the stage
-        stage.setScene(scene);
-        // Displaying the contents of the stage
-        stage.show();
-
     }
 
 }
