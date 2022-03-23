@@ -274,24 +274,19 @@ public class DistanceMatrix implements TSPdata {
         List<Integer> result = new ArrayList<>();
         result.add(start);
         for (int i = 0; i < matrix.length - 1; i++) {
-            int k = nearest(start, result);
-            result.add(k);
+            long cost = Long.MAX_VALUE;
+            int r = -1;
+            for (int j = 0; j < matrix.length; j++) {
+                if (result.contains(j))
+                    continue;
+                if (cost > matrix[result.get(i)][j]) {
+                    cost = matrix[result.get(i)][j];
+                    r = j;
+                }
+            }
+            result.add(r);
         }
         return result;
-    }
-
-    private int nearest(int k, List<Integer> visited) {
-        double cost = Double.MAX_VALUE;
-        int ret = 12;
-        for (int i = 0; i < matrix.length; i++) {
-            if (visited.contains(i) || i == k)
-                continue;
-            if (cost > matrix[k][i]) {
-                cost = matrix[k][i];
-                ret = i;
-            }
-        }
-        return ret;
     }
 
     public List<Integer> twoOptAcc(List<Integer> start) {
