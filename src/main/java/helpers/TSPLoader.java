@@ -23,9 +23,15 @@ public class TSPLoader {
         sc.close();
     }
 
-    public static ArrayList<String[]> returnScanner(File file) throws Exception {
-        TSPLoader tree = new TSPLoader(file);
-        return tree.storing;
+    public static Euclidean returnScanner(File file) throws Exception {
+        ArrayList<String[]> tree = new TSPLoader(file).storing;
+        int[] xPoints = new int[tree.size() - 1];
+        int[] yPoints = new int[tree.size() - 1];
+        for (int i = 0; i < tree.size() - 2; i++) {
+            xPoints[i] = Integer.parseInt(tree.get(i)[1]);
+            yPoints[i] = Integer.parseInt(tree.get(i)[2]);
+        }
+        return new Euclidean(xPoints, yPoints);
     }
 
 }

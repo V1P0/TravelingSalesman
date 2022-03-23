@@ -5,6 +5,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javafx.geometry.Point2D;
 import types.TSPdata;
 
 import javax.xml.XMLConstants;
@@ -105,6 +106,21 @@ public class DistanceMatrix implements TSPdata {
             }
         }
 
+    }
+
+    public DistanceMatrix(Euclidean euc) {
+        matrix = new int[euc.xPoints.length][euc.yPoints.length];
+        for (int i = 0; i < euc.xPoints.length; i++) {
+            Point2D point = new Point2D(euc.xPoints[i], euc.yPoints[i]);
+            for (int j = i; j < euc.xPoints.length; j++) {
+                if (i != j) {
+                    matrix[i][j] = (int) point.distance(euc.xPoints[j], euc.yPoints[j]);
+                    matrix[j][i] = matrix[i][j];
+                } else {
+                    matrix[i][j] = -1;
+                }
+            }
+        }
     }
 
     /**

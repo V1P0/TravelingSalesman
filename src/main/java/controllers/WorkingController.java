@@ -6,14 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
@@ -23,7 +23,6 @@ import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,13 +33,17 @@ import helpers.TSPLoader;
 public class WorkingController implements Initializable {
 
     @FXML
-    public AnchorPane surface;
+    public Pane surface;
+    @FXML
+    public Label Label;
 
     FileChooser fileChooser = new FileChooser();
     DistanceMatrix matrix;
     Euclidean euc;
     int[] xPoints;
     int[] yPoints;
+    Group displaGroup;
+    List<Integer> pointsTrace;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -60,11 +63,14 @@ public class WorkingController implements Initializable {
             }
             event.consume();
         });
+        displaGroup = new Group();
+        surface.getChildren().add(displaGroup);
     }
 
     public void generateRandomEuclidean() {
         euc = new Euclidean(50);
-        displayEuclidean(euc);
+        matrix = new DistanceMatrix(euc);
+        displayEuclidean(euc, matrix);
     }
 
     /**
@@ -84,18 +90,13 @@ public class WorkingController implements Initializable {
         } else if (file.getName().endsWith(".euc")) {
             euc = Euclidean.load(file);
             if (euc != null) {
-                displayEuclidean(euc);
+                matrix = new DistanceMatrix(euc);
+                displayEuclidean(euc, matrix);
             }
         } else if (file.getName().endsWith(".tsp")) {
-            ArrayList<String[]> storedValues = TSPLoader.returnScanner(file);
-            xPoints = new int[storedValues.size() - 1];
-            yPoints = new int[storedValues.size() - 1];
-            for (int i = 0; i < storedValues.size() - 2; i++) {
-                xPoints[i] = Integer.parseInt(storedValues.get(i)[1]);
-                yPoints[i] = Integer.parseInt(storedValues.get(i)[2]);
-            }
-            euc = new Euclidean(xPoints, yPoints);
-            displayEuclidean(euc);
+            euc = TSPLoader.returnScanner(file);
+            matrix = new DistanceMatrix(euc);
+            displayEuclidean(euc, matrix);
 
         } else {
             System.out.println("wrong file format");
@@ -114,7 +115,8 @@ public class WorkingController implements Initializable {
     public void saveFile() {
         if (matrix != null) {
             matrix.save(matrix.toString() + ".dm");
-        } else if (euc != null) {
+        }
+        if (euc != null) {
             euc.save(euc.toString());
         }
     }
@@ -129,11 +131,60 @@ public class WorkingController implements Initializable {
         displayMatrix(matrix);
     }
 
+    public void generateLines(Event e) {
+        displaGroup.getChildren().removeIf(node -> node instanceof Line);
+        System.out.println();
+        Point2D[] points = euc.getPoints();
+        switch (((MenuItem) (e.getSource())).getText()) {
+            case "K-Random":
+                pointsTrace = matrix.kRandom(500);
+                break;
+            case "K-Random Threaded":
+                pointsTrace = matrix.kRandomThreaded(500);
+                break;
+            case "nearest":
+                pointsTrace = matrix.nearest();
+                break;
+            case "2-opt":
+                if (pointsTrace == null)
+                    return;
+                pointsTrace = matrix.twoOpt(pointsTrace);
+                break;
+            case "2-opt Acc":
+                if (pointsTrace == null)
+                    return;
+                pointsTrace = matrix.twoOptAcc(pointsTrace);
+                break;
+            case "3-opt":
+                if (pointsTrace == null)
+                    return;
+                pointsTrace = matrix.threeOpt(pointsTrace);
+                break;
+            default:
+                break;
+        }
+
+        Label.setText("Total cost: " + matrix.cost(pointsTrace));
+        for (int i = 0; i < pointsTrace.size(); i++) {
+            Line line = new Line(points[pointsTrace.get(i)].getX(), points[pointsTrace.get(i)].getY(),
+                    points[pointsTrace.get((i + 1) % pointsTrace.size())].getX(),
+                    points[pointsTrace.get((i + 1) % pointsTrace.size())].getY());
+
+            line.setStrokeWidth(2);
+            displaGroup.getChildren().add(line);
+            line.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                    event -> Label.setText("Cost this line is: " + new Point2D(line.getStartX(),
+                            line.getStartY())
+                            .distance(line.getEndX(), line.getEndY())));
+            line.addEventHandler(MouseEvent.MOUSE_EXITED,
+                    event -> Label.setText("Total cost: " + matrix.cost(pointsTrace)));
+        }
+        setEvents();
+    }
+
     private void displayMatrix(DistanceMatrix dm) {
-        surface.getChildren().clear();
-        Group group = new Group();
+        displaGroup.getChildren().clear();
         int sideLength = dm.matrix.length;
-        // double offSet = size / (double) sideLength;
         DecimalFormat df = new DecimalFormat("0.000");
         GridPane gl = new GridPane();
         for (int i = 0; i < sideLength; i++) {
@@ -145,33 +196,15 @@ public class WorkingController implements Initializable {
         }
         gl.setHgap(5);
         gl.setVgap(5);
-        group.getChildren().add(gl);
-        final Point delta = new Point();
-        group.setOnMousePressed(mouseEvent -> {
-            // record a delta distance for the drag and drop operation.
-            delta.x = (int) (group.getLayoutX() - mouseEvent.getSceneX());
-            delta.y = (int) (group.getLayoutY() - mouseEvent.getSceneY());
-        });
+        displaGroup.getChildren().add(gl);
+        setEvents();
 
-        group.setOnMouseDragged(mouseEvent -> {
-            group.setLayoutX(mouseEvent.getSceneX() + delta.x);
-            group.setLayoutY(mouseEvent.getSceneY() + delta.y);
-        });
-
-        group.setOnScroll(scrollEvent -> {
-            double newScale = group.getScaleX() + scrollEvent.getDeltaY() / 80 > 0
-                    ? group.getScaleX() + scrollEvent.getDeltaY() / 80
-                    : 0.4;
-            group.setScaleX(newScale);
-            group.setScaleY(newScale);
-        });
-        surface.getChildren().add(group);
     }
 
-    private void displayEuclidean(Euclidean euc) {
-        surface.getChildren().clear();
+    private void displayEuclidean(Euclidean euc, DistanceMatrix matrix) {
+        displaGroup.getChildren().clear();
         Point2D[] points = euc.getPoints();
-        Label labe = new Label("Total cost: " + euc.cost(1, 3, 6, 7));
+        Label.setText("Total cost: ");
 
         Circle[] pointsToDisaply = new Circle[points.length];
         for (int i = 0; i < points.length; i++) {
@@ -180,42 +213,30 @@ public class WorkingController implements Initializable {
         }
 
         // Creating a Group object
-        Group root = new Group();
-        root.getChildren().addAll(pointsToDisaply);
-        surface.getChildren().add(labe);
+        displaGroup.getChildren().addAll(pointsToDisaply);
 
-        for (int i = 0; i < points.length; i++) {
-            for (int j = 0; j < points.length; j++) {
-                Line line = new Line(points[i].getX(), points[i].getY(), points[j].getX(), points[j].getY());
-                line.setStrokeWidth(2);
-                root.getChildren().add(line);
-                line.addEventHandler(MouseEvent.MOUSE_ENTERED,
-                        event -> labe.setText("Cost this line is: " + new Point2D(line.getStartX(), line.getStartY())
-                                .distance(line.getEndX(), line.getEndY())));
-                line.addEventHandler(MouseEvent.MOUSE_EXITED,
-                        event -> labe.setText("Total cost: " + euc.cost(1, 3, 6, 7)));
-            }
-        }
+        setEvents();
+    }
+
+    private void setEvents() {
         final Point delta = new Point();
-        root.setOnMousePressed(mouseEvent -> {
+        displaGroup.setOnMousePressed(mouseEvent -> {
             // record a delta distance for the drag and drop operation.
-            delta.x = (int) (root.getLayoutX() - mouseEvent.getSceneX());
-            delta.y = (int) (root.getLayoutY() - mouseEvent.getSceneY());
+            delta.x = (int) (displaGroup.getLayoutX() - mouseEvent.getSceneX());
+            delta.y = (int) (displaGroup.getLayoutY() - mouseEvent.getSceneY());
         });
 
-        root.setOnMouseDragged(mouseEvent -> {
-            root.setLayoutX(mouseEvent.getSceneX() + delta.x);
-            root.setLayoutY(mouseEvent.getSceneY() + delta.y);
+        displaGroup.setOnMouseDragged(mouseEvent -> {
+            displaGroup.setLayoutX(mouseEvent.getSceneX() + delta.x);
+            displaGroup.setLayoutY(mouseEvent.getSceneY() + delta.y);
         });
 
-        root.setOnScroll(scrollEvent -> {
-            double newScale = root.getScaleX() + scrollEvent.getDeltaY() / 80 > 0
-                    ? root.getScaleX() + scrollEvent.getDeltaY() / 80
+        displaGroup.setOnScroll(scrollEvent -> {
+            double newScale = displaGroup.getScaleX() + scrollEvent.getDeltaY() / 80 > 0
+                    ? displaGroup.getScaleX() + scrollEvent.getDeltaY() / 80
                     : 0.4;
-            root.setScaleX(newScale);
-            root.setScaleY(newScale);
+            displaGroup.setScaleX(newScale);
+            displaGroup.setScaleY(newScale);
         });
-
-        surface.getChildren().add(root);
     }
 }
