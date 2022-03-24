@@ -28,8 +28,13 @@ public class TSPLoader {
         int[] xPoints = new int[tree.size() - 1];
         int[] yPoints = new int[tree.size() - 1];
         for (int i = 0; i < tree.size() - 2; i++) {
-            xPoints[i] = Integer.parseInt(tree.get(i)[1]);
-            yPoints[i] = Integer.parseInt(tree.get(i)[2]);
+            try {
+                xPoints[i] = Integer.parseInt(tree.get(i)[1]);
+                yPoints[i] = Integer.parseInt(tree.get(i)[2]);
+            } catch (NumberFormatException e) {
+                xPoints[i] = (int) (Double.parseDouble(tree.get(i)[1]) + 0.5);
+                yPoints[i] = (int) (Double.parseDouble(tree.get(i)[2]) + 0.5);
+            }
         }
         return new Euclidean(xPoints, yPoints);
     }
