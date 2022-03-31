@@ -291,6 +291,90 @@ public class DistanceMatrix implements TSPdata {
         return result;
     }
 
+    public List<Integer> nearestBetter() {
+        final List<List<Integer>> bests = new LinkedList<>();
+        Thread[] fredy = new Thread[matrix.length];
+        for (int i = 0; i < matrix.length; i++) {
+            int finalI = i;
+            fredy[i] = new Thread(() -> {
+                List<Integer> foo = nearestBetter(finalI);
+                synchronized (bests) {
+                    bests.add(foo);
+                }
+            });
+        }
+        for (Thread x : fredy) {
+            x.start();
+        }
+        try {
+            for (Thread x : fredy) {
+                x.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<Integer> res = new ArrayList<>();
+        double cost = Double.MAX_VALUE;
+        for (int i = 0; i < matrix.length; i++) {
+            double newCost = cost(bests.get(i));
+            if (newCost < cost) {
+                cost = newCost;
+                res = bests.get(i);
+            }
+        }
+        return res;
+    }
+
+
+    public List<Integer> nearestBetter(int start){
+        return nearestBetterInner(start, new ArrayList<>(Collections.singletonList(start)),0);
+    }
+
+    private List<Integer> nearestBetterInner(int start, List<Integer> visited, int depth){
+        if(depth == matrix.length-1){
+            return visited;
+        }
+        long cost = Long.MAX_VALUE;
+        int amount = 0;
+        List<Integer> candidates = new ArrayList<>();
+        for (int j = 0; j < matrix.length; j++) {
+            if (visited.contains(j))
+                continue;
+            if (cost > matrix[start][j]) {
+                cost = matrix[start][j];
+                amount = 1;
+                candidates.clear();
+                candidates.add(j);
+            }else if(cost == matrix[start][j]) {
+                amount++;
+                candidates.add(j);
+            }
+        }
+        if(amount == 1){
+            List<Integer> foo = new ArrayList<>(visited);
+            foo.add(candidates.get(0));
+            List<Integer> woohoo = nearestBetterInner(candidates.get(0),foo,depth+1);
+            return woohoo;
+        }else{
+            List<List<Integer>> bests = new LinkedList<>();
+            for (Integer candidate : candidates) {
+                List<Integer> foo = new ArrayList<>(visited);
+                foo.add(candidate);
+                bests.add(nearestBetterInner(candidate, foo, depth + 1));
+            }
+            List<Integer> res = new ArrayList<>();
+            long Bcost = Long.MAX_VALUE;
+            for (List<Integer> best : bests) {
+                long newCost = cost(best);
+                if (newCost < Bcost) {
+                    Bcost = newCost;
+                    res = best;
+                }
+            }
+            return res;
+        }
+    }
+
     public List<Integer> twoOptAcc(List<Integer> start) {
         List<Integer> result = new ArrayList<>(start);
         for (int n = 0; n < matrix.length; n++) {
