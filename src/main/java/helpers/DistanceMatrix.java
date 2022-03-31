@@ -199,7 +199,7 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> kRandomThreaded(int k, int threads) {
-        final List<Integer>[] bests = new List[]{new LinkedList<>()};
+        final List<Integer>[] bests = new List[] { new LinkedList<>() };
         final long[] bestCost = new long[1];
         bestCost[0] = Long.MAX_VALUE;
         Thread[] fredy = new Thread[threads];
@@ -412,30 +412,10 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> threeOpt(List<Integer> start) {
-        List<Integer> tour = new ArrayList<>(start);
-        for (int i = 1; i < matrix.length; i++) {
-            for (int j = i + 1; j < matrix.length; j++) {
-                for (int k = j + 1; k < matrix.length; k++) {
-                    List<Integer> candidate = new ArrayList<>(tour);
-                    reversePart(candidate, i, k);
-                    reversePart(candidate, j, k);
-                    if (cost(candidate) < cost(tour)) {
-                        tour = candidate;
-                        i = 1;
-                        j = 2;
-                        k = 2;
-                    }
-                }
-            }
-        }
-        return tour;
-    }
-
-    public List<Integer> threeOptAcc(List<Integer> start) {
         for (int i = 1; i < start.size(); i++) {
             for (int j = i + 1; j <= start.size(); j++) {
                 for (int k = j + 1; k <= start.size(); k++) {
-                    if(swapThree(start, i, j, k)){
+                    if (swapThree(start, i, j, k)) {
                         i = 1;
                         j = 2;
                         k = 2;
@@ -479,7 +459,7 @@ public class DistanceMatrix implements TSPdata {
             tmp.addAll(new ArrayList<>(newTour.subList(j, k)));
             tmp.addAll(new ArrayList<>(newTour.subList(i, j)));
             int l = i;
-            for(Integer n : tmp){
+            for (Integer n : tmp) {
                 newTour.set(l, n);
                 l++;
             }

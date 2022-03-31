@@ -61,7 +61,6 @@
             <MenuItem mnemonicParsing="false" onAction="#generateLines" text="2-opt Acc" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#generateLines" text="3-opt" />
-                  <MenuItem mnemonicParsing="false" onAction="#generateLines" text="3-opt Acc" />
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Generate">
