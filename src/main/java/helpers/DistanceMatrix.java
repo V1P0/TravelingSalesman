@@ -347,18 +347,15 @@ public class DistanceMatrix implements TSPdata {
     public List<Integer> threeOptAcc(List<Integer> start) {
         while (true) {
             int delta = 0;
-            for (int i = 1; i <= start.size(); i++) {
+            for (int i = 1; i < start.size(); i++) {
                 for (int j = i + 1; j <= start.size(); j++) {
                     for (int k = j + 1; k <= start.size(); k++) {
                         delta += swapThree(start, i, j, k);
                     }
                 }
             }
-            System.out.println(delta);
-            if (delta >= 0) {
-                // start = twoOptAcc(start);
+            if (delta >= 0)
                 break;
-            }
         }
         return start;
     }
