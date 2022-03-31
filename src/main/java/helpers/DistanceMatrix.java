@@ -186,10 +186,10 @@ public class DistanceMatrix implements TSPdata {
             arr.add(i);
         }
         ArrayList<Integer> res = new ArrayList<>(arr);
-        double cost = Double.MAX_VALUE;
+        long cost = Long.MAX_VALUE;
         for (int i = 0; i < k; i++) {
             Collections.shuffle(arr);
-            double newCost = cost(arr);
+            long newCost = cost(arr);
             if (newCost < cost) {
                 cost = newCost;
                 res = new ArrayList<>(arr);
@@ -198,24 +198,35 @@ public class DistanceMatrix implements TSPdata {
         return res;
     }
 
-    public List<Integer> kRandomThreaded(int k) {
-        final List<List<Integer>> bests = new LinkedList<>();
-        ArrayList<Integer> arr = new ArrayList<>();
-        for (int i = 0; i < matrix.length; i++) {
-            arr.add(i);
-        }
-        Thread[] fredy = new Thread[k];
-        for (int i = 0; i < k; i++) {
+    public List<Integer> kRandomThreaded(int k, int threads) {
+        final List<Integer>[] bests = new List[]{new LinkedList<>()};
+        final long[] bestCost = new long[1];
+        bestCost[0] = Long.MAX_VALUE;
+        Thread[] fredy = new Thread[threads];
+        for (int i = 0; i < threads; i++) {
             fredy[i] = new Thread(() -> {
-                List<Integer> foo = new ArrayList<>(arr);
-                Collections.shuffle(foo);
+                ArrayList<Integer> arr = new ArrayList<>();
+                for (int j = 0; j < matrix.length; j++) {
+                    arr.add(j);
+                }
+                ArrayList<Integer> res = new ArrayList<>(arr);
+                long cost = Long.MAX_VALUE;
+                for (int j = 0; j < k; j++) {
+                    Collections.shuffle(arr);
+                    long newCost = cost(arr);
+                    if (newCost < cost) {
+                        cost = newCost;
+                        res = new ArrayList<>(arr);
+                    }
+                }
                 synchronized (bests) {
-                    bests.add(foo);
+                    if (cost < bestCost[0]) {
+                        bestCost[0] = cost;
+                        bests[0] = res;
+                    }
                 }
             });
-        }
-        for (Thread x : fredy) {
-            x.start();
+            fredy[i].start();
         }
         try {
             for (Thread x : fredy) {
@@ -224,16 +235,7 @@ public class DistanceMatrix implements TSPdata {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<Integer> res = new ArrayList<>();
-        double cost = Double.MAX_VALUE;
-        for (int i = 0; i < k; i++) {
-            double newCost = cost(bests.get(i));
-            if (newCost < cost) {
-                cost = newCost;
-                res = bests.get(i);
-            }
-        }
-        return res;
+        return bests[0];
     }
 
     public List<Integer> nearest() {
@@ -290,23 +292,24 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> twoOptAcc(List<Integer> start) {
+        List<Integer> result = new ArrayList<>(start);
         for (int n = 0; n < matrix.length; n++) {
             for (int m = n + 1; m < matrix.length; m++) {
                 int mm = (m + 1) % matrix.length;
                 if (n == mm)
                     continue;
                 int nn = ((n - 1) + matrix.length) % matrix.length;
-                boolean skip = matrix[start.get(nn)][start.get(n)]
-                        + matrix[start.get(m)][start.get(mm)] > matrix[start.get(nn)][start.get(m)]
-                                + matrix[start.get(n)][start.get(mm)];
+                boolean skip = matrix[result.get(nn)][result.get(n)]
+                        + matrix[result.get(m)][result.get(mm)] > matrix[result.get(nn)][result.get(m)]
+                                + matrix[result.get(n)][result.get(mm)];
                 if (skip) {
-                    reversePart(start, n, m);
+                    reversePart(result, n, m);
                     n = -1;
                     break;
                 }
             }
         }
-        return start;
+        return result;
     }
 
     public List<Integer> twoOpt(List<Integer> start) {
@@ -345,22 +348,21 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> threeOptAcc(List<Integer> start) {
-        while (true) {
-            int delta = 0;
-            for (int i = 1; i < start.size(); i++) {
-                for (int j = i + 1; j <= start.size(); j++) {
-                    for (int k = j + 1; k <= start.size(); k++) {
-                        delta += swapThree(start, i, j, k);
+        for (int i = 1; i < start.size(); i++) {
+            for (int j = i + 1; j <= start.size(); j++) {
+                for (int k = j + 1; k <= start.size(); k++) {
+                    if(swapThree(start, i, j, k)){
+                        i = 1;
+                        j = 2;
+                        k = 2;
                     }
                 }
             }
-            if (delta >= 0)
-                break;
         }
         return start;
     }
 
-    private int swapThree(List<Integer> newTour, int i, int j, int k) {
+    private boolean swapThree(List<Integer> newTour, int i, int j, int k) {
         int d0 = matrix[newTour.get(i - 1)][newTour.get(i)] + matrix[newTour.get(j - 1)][newTour.get(j)]
                 + matrix[newTour.get(k - 1)][newTour.get(k % newTour.size())];
 
@@ -378,28 +380,30 @@ public class DistanceMatrix implements TSPdata {
 
         if (d0 > d1) {
             Collections.reverse(newTour.subList(i, j));
-            return -d0 + d1;
+            return true;
         }
         if (d0 > d2) {
             Collections.reverse(newTour.subList(j, k));
-            return -d0 + d2;
+            return true;
         }
         if (d0 > d4) {
             Collections.reverse(newTour.subList(i, k));
-            return -d0 + d4;
+            return true;
         }
         if (d0 > d3) {
             List<Integer> tmp = new ArrayList<>();
-            tmp.addAll(newTour.subList(j, k));
-            tmp.addAll(newTour.subList(i, j));
-            for (int l = newTour.indexOf(newTour.get(i)); l < newTour.indexOf(newTour.get(k)); l++) {
-                newTour.set(l, tmp.get(l - newTour.indexOf(newTour.get(i))));
+            tmp.addAll(new ArrayList<>(newTour.subList(j, k)));
+            tmp.addAll(new ArrayList<>(newTour.subList(i, j)));
+            int l = i;
+            for(Integer n : tmp){
+                newTour.set(l, n);
+                l++;
             }
 
-            return -d0 + d3;
+            return true;
         }
 
-        return 0;
+        return false;
     }
 
     private void reversePart(List<Integer> list, int n, int k) {

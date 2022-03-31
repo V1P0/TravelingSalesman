@@ -140,7 +140,7 @@ public class WorkingController implements Initializable {
                 pointsTrace = matrix.kRandom(500);
                 break;
             case "K-Random Threaded":
-                pointsTrace = matrix.kRandomThreaded(500);
+                pointsTrace = matrix.kRandomThreaded(300, 4);
                 break;
             case "nearest":
                 pointsTrace = matrix.nearest();

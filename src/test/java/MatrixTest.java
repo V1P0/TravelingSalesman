@@ -58,7 +58,7 @@ public class MatrixTest {
     public void myTest() {
         File file = new File("C:\\Users\\oem\\Desktop\\a280.xml");
         DistanceMatrix dm = new DistanceMatrix(file);
-        List<Integer> res = dm.kRandomThreaded(40);
+        List<Integer> res = dm.kRandomThreaded(40, 4);
         System.out.println(res.size());
         System.out.println(res);
         System.out.println(dm.cost(res));
@@ -91,5 +91,20 @@ public class MatrixTest {
         System.out.println(topt);
         System.out.println(dm.cost(topt));
         topt = dm.twoOptAcc(topt);
+    }
+
+    @Test
+    public void NearestTest(){
+        File file = new File("C:\\Users\\oem\\Desktop\\berlin52.xml");
+        DistanceMatrix dm = new DistanceMatrix(file);
+        List<Integer> res = dm.nearest(0);
+        System.out.println(res);
+        System.out.println(dm.cost(res));
+        res = dm.twoOptAcc(res);
+        System.out.println(res);
+        System.out.println(dm.cost(res));
+        res = dm.threeOpt(res);
+        System.out.println(res);
+        System.out.println(dm.cost(res));
     }
 }
