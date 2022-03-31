@@ -160,6 +160,11 @@ public class WorkingController implements Initializable {
                     return;
                 pointsTrace = matrix.threeOpt(pointsTrace);
                 break;
+            case "3-opt Acc":
+                if (pointsTrace == null)
+                    return;
+                pointsTrace = matrix.threeOptAcc(pointsTrace);
+                break;
             default:
                 break;
         }

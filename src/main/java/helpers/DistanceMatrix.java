@@ -344,6 +344,67 @@ public class DistanceMatrix implements TSPdata {
         return tour;
     }
 
+    public List<Integer> threeOptAcc(List<Integer> start) {
+        while (true) {
+            int delta = 0;
+            for (int i = 1; i <= start.size(); i++) {
+                for (int j = i + 1; j <= start.size(); j++) {
+                    for (int k = j + 1; k <= start.size(); k++) {
+                        delta += swapThree(start, i, j, k);
+                    }
+                }
+            }
+            System.out.println(delta);
+            if (delta >= 0) {
+                // start = twoOptAcc(start);
+                break;
+            }
+        }
+        return start;
+    }
+
+    private int swapThree(List<Integer> newTour, int i, int j, int k) {
+        int d0 = matrix[newTour.get(i - 1)][newTour.get(i)] + matrix[newTour.get(j - 1)][newTour.get(j)]
+                + matrix[newTour.get(k - 1)][newTour.get(k % newTour.size())];
+
+        int d1 = matrix[newTour.get(i - 1)][newTour.get(j - 1)] + matrix[newTour.get(i)][newTour.get(j)]
+                + matrix[newTour.get(k - 1)][newTour.get(k % newTour.size())];
+
+        int d2 = matrix[newTour.get(i - 1)][newTour.get(i)] + matrix[newTour.get(j - 1)][newTour.get(k - 1)]
+                + matrix[newTour.get(j)][newTour.get(k % newTour.size())];
+
+        int d3 = matrix[newTour.get(i - 1)][newTour.get(j)] + matrix[newTour.get(k - 1)][newTour.get(i)]
+                + matrix[newTour.get(j - 1)][newTour.get(k % newTour.size())];
+
+        int d4 = matrix[newTour.get(k % newTour.size())][newTour.get(i)] + matrix[newTour.get(j - 1)][newTour.get(j)]
+                + matrix[newTour.get(k - 1)][newTour.get(i - 1)];
+
+        if (d0 > d1) {
+            Collections.reverse(newTour.subList(i, j));
+            return -d0 + d1;
+        }
+        if (d0 > d2) {
+            Collections.reverse(newTour.subList(j, k));
+            return -d0 + d2;
+        }
+        if (d0 > d4) {
+            Collections.reverse(newTour.subList(i, k));
+            return -d0 + d4;
+        }
+        if (d0 > d3) {
+            List<Integer> tmp = new ArrayList<>();
+            tmp.addAll(newTour.subList(j, k));
+            tmp.addAll(newTour.subList(i, j));
+            for (int l = newTour.indexOf(newTour.get(i)); l < newTour.indexOf(newTour.get(k)); l++) {
+                newTour.set(l, tmp.get(l - newTour.indexOf(newTour.get(i))));
+            }
+
+            return -d0 + d3;
+        }
+
+        return 0;
+    }
+
     private void reversePart(List<Integer> list, int n, int k) {
         while (k > n) {
             Collections.swap(list, n, k);
