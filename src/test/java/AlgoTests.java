@@ -25,7 +25,7 @@ od jakości rozwiązania startowego (losowe vs. najbliższy sąsiad)?
 
 public class AlgoTests {
 
-    // String destination = "P:\\TravelingSalesman\\data";
+     String destination = "C:\\Users\\oem\\PycharmProjects\\MetaCsv\\";
     @Test
     public void testRandom() throws Exception {
         Euclidean eu = TSPLoader.returnScanner(new File("data/berlin52.tsp"));
