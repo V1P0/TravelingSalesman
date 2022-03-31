@@ -302,9 +302,7 @@ public class DistanceMatrix implements TSPdata {
                     bests.add(foo);
                 }
             });
-        }
-        for (Thread x : fredy) {
-            x.start();
+            fredy[i].start();
         }
         try {
             for (Thread x : fredy) {
