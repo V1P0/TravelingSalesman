@@ -94,7 +94,7 @@ public class MatrixTest {
     }
 
     @Test
-    public void NearestTest(){
+    public void NearestTest() {
         File file = new File("C:\\Users\\oem\\Desktop\\berlin52.xml");
         DistanceMatrix dm = new DistanceMatrix(file);
         List<Integer> res = dm.nearest(0);
