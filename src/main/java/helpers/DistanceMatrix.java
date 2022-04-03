@@ -205,6 +205,7 @@ public class DistanceMatrix implements TSPdata {
         Thread[] fredy = new Thread[threads];
         for (int i = 0; i < threads; i++) {
             fredy[i] = new Thread(() -> {
+                Random r = new Random();
                 ArrayList<Integer> arr = new ArrayList<>();
                 for (int j = 0; j < matrix.length; j++) {
                     arr.add(j);
@@ -212,7 +213,14 @@ public class DistanceMatrix implements TSPdata {
                 ArrayList<Integer> res = new ArrayList<>(arr);
                 long cost = Long.MAX_VALUE;
                 for (int j = 0; j < k; j++) {
-                    Collections.shuffle(arr);
+                    for (int in = matrix.length-1; in > 0; in--) {
+
+                        // Pick a random index from 0 to i
+                        int jn = r.nextInt(in);
+
+                        // Swap arr[i] with the element at random index
+                        Collections.swap(arr, in, jn);
+                    }
                     long newCost = cost(arr);
                     if (newCost < cost) {
                         cost = newCost;
