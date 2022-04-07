@@ -159,16 +159,25 @@ public class AlgoTests {
 
     @Test
     public void ThreeVsTwoVsTime() throws Exception {
-        Euclidean euc = new Euclidean(80);
-        DistanceMatrix matrix = new DistanceMatrix(euc);
-        PrintWriter writer = new PrintWriter(destination + "compareTimes.csv", StandardCharsets.UTF_8);
 
-        for (int k = 1; k <= 60; k++) {
+        PrintWriter writer = new PrintWriter(destination + "bigCompare.csv", StandardCharsets.UTF_8);
+
+        // for (int i = 50; i <= 250; i += 50) {
+        Euclidean euc = new Euclidean(250);
+        DistanceMatrix matrix = new DistanceMatrix(euc);
+        long avgTime3opt = 0;
+        long avgTime2opt = 0;
+        long avgTime2optAcc = 0;
+        long avgCost3opt = 0;
+        long avgCost2opt = 0;
+        long avgCost2optAcc = 0;
+
+        for (int j = 0; j <= 10; j++) {
             long time3opt = 0;
             long time2optAcc = 0;
             long time2opt = 0;
 
-            List<Integer> listBasic1 = matrix.kRandom(30);
+            List<Integer> listBasic1 = matrix.kRandom(5);
             List<Integer> listBasic2 = new ArrayList<>(listBasic1);
             List<Integer> listBasic3 = new ArrayList<>(listBasic1);
 
@@ -184,53 +193,77 @@ public class AlgoTests {
             matrix.twoOpt(listBasic3);
             time2opt = System.currentTimeMillis() - time2opt;
 
-            writer.println(time3opt + " , " + time2optAcc + " , " + time2opt);
+            avgTime3opt += time3opt;
+            avgTime2optAcc += time2optAcc;
+            avgTime2opt += time2opt;
+
+            avgCost3opt += matrix.cost(listBasic1);
+            avgCost2optAcc += matrix.cost(listBasic2);
+            avgCost2opt += matrix.cost(listBasic3);
         }
+
+        avgTime3opt /= 10;
+        avgTime2optAcc /= 10;
+        avgTime2opt /= 10;
+
+        avgCost3opt /= 10;
+        avgCost2optAcc /= 10;
+        avgCost2opt /= 10;
+
+        writer.println("Wielkość Instancji: " + 100 + "\n" + "3opt: " + avgTime3opt + " | " + avgCost3opt + "\n"
+                + "2opt: "
+                + avgTime2opt + " | " + avgCost2opt + "\n" + "2optAcc: " + avgTime2optAcc + " | " + avgCost2optAcc);
+        // }
+
         writer.close();
     }
 
     @Test
-    public void WilixonTest() throws IOException {
+    public void WilixonTest() throws Exception {
         WilcoxonSignedRankTest test = new WilcoxonSignedRankTest();
-        Euclidean euc = new Euclidean(80);
+        Euclidean euc = TSPLoader.returnScanner(new File("data/berlin52.tsp"));
         DistanceMatrix matrix = new DistanceMatrix(euc);
         PrintWriter writer = new PrintWriter(destination + "Wilcoxon.csv", StandardCharsets.UTF_8);
-        double[] kRadnomResults = new double[9];
-        double[] twoOptResults = new double[9];
-        double[] twoOptAccResults = new double[9];
-        double[] threeOptResults = new double[9];
+        // double[] kRadnomResults = new double[20];
+        double[] twoOptResults = new double[20];
+        double[] twoOptAccResults = new double[20];
+        double[] threeOptResults = new double[20];
+        double[] nearest = new double[20];
 
-        for (int i = 0; i < 8; i++) {
-            List<Integer> listKRadnom = matrix.kRandom(30);
-            List<Integer> list2opt = new ArrayList<>(listKRadnom);
-            List<Integer> list2optAcc = new ArrayList<>(listKRadnom);
-            List<Integer> list3opt = new ArrayList<>(listKRadnom);
-            kRadnomResults[i] = matrix.cost(listKRadnom);
+        for (int i = 0; i < 19; i++) {
+            // List<Integer> listKRadnom = matrix.kRandom(30);
+            // kRadnomResults[i] = matrix.cost(listKRadnom);
+            List<Integer> nearestList = matrix.nearest(30);
+            nearest[i] = matrix.cost(nearestList);
+
+            List<Integer> list2opt = new ArrayList<>(nearestList);
+            List<Integer> list2optAcc = new ArrayList<>(nearestList);
+            List<Integer> list3opt = new ArrayList<>(nearestList);
             twoOptResults[i] = matrix.cost(matrix.twoOpt(list2opt));
             twoOptAccResults[i] = matrix.cost(matrix.twoOptAcc(list2optAcc));
             threeOptResults[i] = matrix.cost(matrix.threeOpt(list3opt));
         }
 
         writer.print("[");
-        for (int j = 0; j < 8; j++) {
-            writer.print(kRadnomResults[j] + " , ");
+        for (int j = 0; j < 19; j++) {
+            writer.print(nearest[j] + " , ");
         }
         writer.print("]");
         writer.println('\n');
         writer.print("[");
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 19; j++) {
             writer.print(twoOptResults[j] + " , ");
         }
         writer.print("]");
         writer.println('\n');
         writer.print("[");
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 19; j++) {
             writer.print(twoOptAccResults[j] + " , ");
         }
         writer.print("]");
         writer.println('\n');
         writer.print("[");
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 19; j++) {
             writer.print(threeOptResults[j] + " , ");
         }
         writer.print("]");
