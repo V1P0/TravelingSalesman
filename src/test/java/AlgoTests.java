@@ -182,24 +182,21 @@ public class AlgoTests {
             List<Integer> listBasic3 = new ArrayList<>(listBasic1);
 
             time3opt = System.currentTimeMillis();
-            matrix.threeOpt(listBasic1);
+            avgCost3opt += matrix.cost(matrix.threeOpt(listBasic3));
             time3opt = System.currentTimeMillis() - time3opt;
 
             time2optAcc = System.currentTimeMillis();
-            matrix.twoOptAcc(listBasic2);
+            avgCost2optAcc += matrix.cost(matrix.twoOptAcc(listBasic2));
             time2optAcc = System.currentTimeMillis() - time2optAcc;
 
             time2opt = System.currentTimeMillis();
-            matrix.twoOpt(listBasic3);
+            avgCost2opt += matrix.cost(matrix.twoOpt(listBasic3));
             time2opt = System.currentTimeMillis() - time2opt;
 
             avgTime3opt += time3opt;
-            avgTime2optAcc += time2optAcc;
+            avgCost2optAcc += avgTime2optAcc += time2optAcc;
             avgTime2opt += time2opt;
 
-            avgCost3opt += matrix.cost(listBasic1);
-            avgCost2optAcc += matrix.cost(listBasic2);
-            avgCost2opt += matrix.cost(listBasic3);
         }
 
         avgTime3opt /= 10;
