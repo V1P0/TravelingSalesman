@@ -1,13 +1,12 @@
 import helpers.DistanceMatrix;
 import helpers.Euclidean;
 import helpers.TSPLoader;
-import helpers.DistanceMatrix.types;
 
+import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,8 @@ od jakości rozwiązania startowego (losowe vs. najbliższy sąsiad)?
 
 public class AlgoTests {
 
-    // String destination = "P:\\TravelingSalesman\\data";
+    String destination = "P:\\TravelingSalesman\\data";
+
     @Test
     public void testRandom() throws Exception {
         Euclidean eu = TSPLoader.returnScanner(new File("data/berlin52.tsp"));
@@ -187,5 +187,54 @@ public class AlgoTests {
             writer.println(time3opt + " , " + time2optAcc + " , " + time2opt);
         }
         writer.close();
+    }
+
+    @Test
+    public void WilixonTest() throws IOException {
+        WilcoxonSignedRankTest test = new WilcoxonSignedRankTest();
+        Euclidean euc = new Euclidean(80);
+        DistanceMatrix matrix = new DistanceMatrix(euc);
+        PrintWriter writer = new PrintWriter(destination + "Wilcoxon.csv", StandardCharsets.UTF_8);
+        double[] kRadnomResults = new double[9];
+        double[] twoOptResults = new double[9];
+        double[] twoOptAccResults = new double[9];
+        double[] threeOptResults = new double[9];
+
+        for (int i = 0; i < 8; i++) {
+            List<Integer> listKRadnom = matrix.kRandom(30);
+            List<Integer> list2opt = new ArrayList<>(listKRadnom);
+            List<Integer> list2optAcc = new ArrayList<>(listKRadnom);
+            List<Integer> list3opt = new ArrayList<>(listKRadnom);
+            kRadnomResults[i] = matrix.cost(listKRadnom);
+            twoOptResults[i] = matrix.cost(matrix.twoOpt(list2opt));
+            twoOptAccResults[i] = matrix.cost(matrix.twoOptAcc(list2optAcc));
+            threeOptResults[i] = matrix.cost(matrix.threeOpt(list3opt));
+        }
+
+        writer.print("[");
+        for (int j = 0; j < 8; j++) {
+            writer.print(kRadnomResults[j] + " , ");
+        }
+        writer.print("]");
+        writer.println('\n');
+        writer.print("[");
+        for (int j = 0; j < 8; j++) {
+            writer.print(twoOptResults[j] + " , ");
+        }
+        writer.print("]");
+        writer.println('\n');
+        writer.print("[");
+        for (int j = 0; j < 8; j++) {
+            writer.print(twoOptAccResults[j] + " , ");
+        }
+        writer.print("]");
+        writer.println('\n');
+        writer.print("[");
+        for (int j = 0; j < 8; j++) {
+            writer.print(threeOptResults[j] + " , ");
+        }
+        writer.print("]");
+        writer.close();
+
     }
 }

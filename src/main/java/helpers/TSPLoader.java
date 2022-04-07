@@ -25,8 +25,8 @@ public class TSPLoader {
 
     public static Euclidean returnScanner(File file) throws Exception {
         ArrayList<String[]> tree = new TSPLoader(file).storing;
-        int[] xPoints = new int[tree.size() - 1];
-        int[] yPoints = new int[tree.size() - 1];
+        int[] xPoints = new int[tree.size() - 2];
+        int[] yPoints = new int[tree.size() - 2];
         for (int i = 0; i < tree.size() - 2; i++) {
             try {
                 xPoints[i] = Integer.parseInt(tree.get(i)[1]);
@@ -36,6 +36,7 @@ public class TSPLoader {
                 yPoints[i] = (int) (Double.parseDouble(tree.get(i)[2]) + 0.5);
             }
         }
+
         return new Euclidean(xPoints, yPoints);
     }
 
