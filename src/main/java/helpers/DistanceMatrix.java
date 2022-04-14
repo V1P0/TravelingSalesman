@@ -1,5 +1,6 @@
 package helpers;
 
+import TabuStuff.AreaGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -381,6 +382,31 @@ public class DistanceMatrix implements TSPdata {
         }
     }
 
+    public List<Integer> tabuSearch(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize){
+        boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
+        // fill tabuMatrix with false
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                tabuMatrix[i][j] = false;
+            }
+        }
+        int[][] tabuList = new int[tabuSize][2];
+        for (int i = 0; i < tabuList.length; i++) {
+            tabuList[i][0] = 0;
+            tabuList[i][1] = 0;
+        }
+        int tabuIndex = 0;
+        long startTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() - startTime < timeLimit) {
+            for(int i = 1; i < 20; i++) {
+                start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex);
+                tabuIndex = (tabuIndex + 1) % tabuSize;
+            }
+        }
+        return start;
+
+    }
+
     public List<Integer> twoOptAcc(List<Integer> start) {
         List<Integer> result = new ArrayList<>(start);
         for (int n = 0; n < matrix.length; n++) {
@@ -476,7 +502,7 @@ public class DistanceMatrix implements TSPdata {
         return false;
     }
 
-    private void reversePart(List<Integer> list, int n, int k) {
+    public static void reversePart(List<Integer> list, int n, int k) {
         while (k > n) {
             Collections.swap(list, n, k);
             n++;
