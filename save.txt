@@ -1,0 +1,19 @@
+Wielkość Instancji: 50
+3opt: 4 | 4641
+2opt: 35 | 4743
+2optAcc: 0 | 4743
+
+Wielkość Instancji: 100
+3opt: 52 | 6443
+2opt: 707 | 6659
+2optAcc: 7 | 6659
+
+Wielkość Instancji: 150
+3opt: 225 | 7749
+2opt: 4202 | 8028
+2optAcc: 28 | 8028
+
+Wielkość Instancji: 200
+3opt: 677 | 9639
+2opt: 12107 | 10017
+2optAcc: 72 | 10017

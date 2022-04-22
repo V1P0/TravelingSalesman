@@ -13,3 +13,5 @@ buildNumber.properties
 target/
 */*.iml
 *.class
+
+*/node_modules/
