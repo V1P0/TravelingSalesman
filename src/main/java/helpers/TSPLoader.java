@@ -16,6 +16,7 @@ public class TSPLoader {
             if ("NODE_COORD_SECTION".equals(line)) {
                 while (sc.hasNextLine()) {
                     nextValue = sc.nextLine();
+                    if (nextValue.equals("EOF")) break;
                     storing.add(nextValue.trim().split("\\s+"));
                 }
             }
@@ -25,9 +26,9 @@ public class TSPLoader {
 
     public static Euclidean returnScanner(File file) throws Exception {
         ArrayList<String[]> tree = new TSPLoader(file).storing;
-        int[] xPoints = new int[tree.size() - 2];
-        int[] yPoints = new int[tree.size() - 2];
-        for (int i = 0; i < tree.size() - 2; i++) {
+        int[] xPoints = new int[tree.size()];
+        int[] yPoints = new int[tree.size()];
+        for (int i = 0; i < tree.size(); i++) {
             try {
                 xPoints[i] = Integer.parseInt(tree.get(i)[1]);
                 yPoints[i] = Integer.parseInt(tree.get(i)[2]);

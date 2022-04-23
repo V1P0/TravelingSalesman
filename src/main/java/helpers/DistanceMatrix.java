@@ -383,7 +383,10 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> tabuSearch(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize){
+        int MAX_PATIENCE = 100;
         boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
+        List<Integer> best = start;
+        long bestCost = cost(best);
         // fill tabuMatrix with false
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
@@ -396,14 +399,26 @@ public class DistanceMatrix implements TSPdata {
             tabuList[i][1] = 0;
         }
         int tabuIndex = 0;
+        int patience = 0;
         long startTime = System.currentTimeMillis();
-        while(System.currentTimeMillis() - startTime < timeLimit) {
-            for(int i = 1; i < 20; i++) {
-                start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex);
-                tabuIndex = (tabuIndex + 1) % tabuSize;
+        timeLimit = timeLimit + startTime;
+        while(System.currentTimeMillis() < timeLimit) {
+            start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex);
+            long cost = cost(start);
+            if(cost < bestCost){
+                best = start;
+                bestCost = cost;
+                patience = 0;
+            }else{
+                patience++;
             }
+            if(patience == MAX_PATIENCE){
+                start = kRandom(100);
+                patience = 0;
+            }
+            tabuIndex = (tabuIndex + 1) % tabuSize;
         }
-        return start;
+        return best;
 
     }
 

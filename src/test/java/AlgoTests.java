@@ -158,81 +158,6 @@ public class AlgoTests {
         writer.close();
     }
 
-    @Test
-    public void ThreeVsTwoVsTime() throws Exception {
-<<<<<<< Updated upstream
-        Euclidean euc = new Euclidean(80);
-=======
-
-        PrintWriter writer = new PrintWriter(destination + "bigCompare.csv", StandardCharsets.UTF_8);
-
-        // for (int i = 50; i <= 250; i += 50) {
-        int i = 250;
-        int k = 10;
-        Euclidean euc = new Euclidean(i);
->>>>>>> Stashed changes
-        DistanceMatrix matrix = new DistanceMatrix(euc);
-        PrintWriter writer = new PrintWriter(destination + "compareTimes.csv", StandardCharsets.UTF_8);
-
-<<<<<<< Updated upstream
-        for (int k = 1; k <= 60; k++) {
-=======
-        for (int j = 0; j <= k; j++) {
->>>>>>> Stashed changes
-            long time3opt = 0;
-            long time2optAcc = 0;
-            long time2opt = 0;
-
-<<<<<<< Updated upstream
-            List<Integer> listBasic1 = matrix.kRandom(30);
-=======
-            List<Integer> listBasic1 = matrix.kRandom(1);
->>>>>>> Stashed changes
-            List<Integer> listBasic2 = new ArrayList<>(listBasic1);
-            List<Integer> listBasic3 = new ArrayList<>(listBasic1);
-
-            time3opt = System.currentTimeMillis();
-<<<<<<< Updated upstream
-            matrix.threeOpt(listBasic1);
-=======
-            avgCost3opt += matrix.cost(matrix.threeOpt(listBasic1));
->>>>>>> Stashed changes
-            time3opt = System.currentTimeMillis() - time3opt;
-
-            time2optAcc = System.currentTimeMillis();
-            matrix.twoOptAcc(listBasic2);
-            time2optAcc = System.currentTimeMillis() - time2optAcc;
-
-            time2opt = System.currentTimeMillis();
-            matrix.twoOpt(listBasic3);
-            time2opt = System.currentTimeMillis() - time2opt;
-
-<<<<<<< Updated upstream
-            writer.println(time3opt + " , " + time2optAcc + " , " + time2opt);
-        }
-=======
-            avgTime3opt += time3opt;
-            avgTime2optAcc += time2optAcc;
-            avgTime2opt += time2opt;
-
-        }
-
-        avgTime3opt /= k;
-        avgTime2optAcc /= k;
-        avgTime2opt /= k;
-
-        avgCost3opt /= k;
-        avgCost2optAcc /= k;
-        avgCost2opt /= k;
-
-        writer.println("Wielkość Instancji: " + i + "\n" + "3opt: " + avgTime3opt + " | " + avgCost3opt + "\n"
-                + "2opt: "
-                + avgTime2opt + " | " + avgCost2opt + "\n" + "2optAcc: " + avgTime2optAcc + " | " + avgCost2optAcc);
-        // }
-
->>>>>>> Stashed changes
-        writer.close();
-    }
 
     @Test
     public void tabuTest() throws Exception {
@@ -241,11 +166,14 @@ public class AlgoTests {
         List<Integer> xd = dm.kRandom(100);
         System.out.println(xd);
         System.out.println(dm.cost(xd));
+        long time = System.currentTimeMillis();
+        List<Integer> result = dm.twoOptAcc(xd);
+        time = System.currentTimeMillis() - time;
+        System.out.println(time);
+        System.out.println(dm.cost(result));
         List<Integer> res = dm.tabuSearch(xd, 1000, new TwoOptLikeGenerator(), 42);
         System.out.println(res);
         System.out.println(dm.cost(res));
-        res = dm.tabuSearch(xd, 1000, new TwoOptLikeGenerator(), 42);
-        System.out.println(res);
-        System.out.println(dm.cost(res));
+        System.out.println(res.size());
     }
 }
