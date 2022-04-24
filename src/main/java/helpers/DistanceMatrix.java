@@ -115,7 +115,7 @@ public class DistanceMatrix implements TSPdata {
             Point2D point = new Point2D(euc.xPoints[i], euc.yPoints[i]);
             for (int j = i; j < euc.xPoints.length; j++) {
                 if (i != j) {
-                    matrix[i][j] = (int) point.distance(euc.xPoints[j], euc.yPoints[j]);
+                    matrix[i][j] = (int) (point.distance(euc.xPoints[j], euc.yPoints[j])+0.5);
                     matrix[j][i] = matrix[i][j];
                 } else {
                     matrix[i][j] = -1;
