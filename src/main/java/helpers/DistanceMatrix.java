@@ -115,7 +115,7 @@ public class DistanceMatrix implements TSPdata {
             Point2D point = new Point2D(euc.xPoints[i], euc.yPoints[i]);
             for (int j = i; j < euc.xPoints.length; j++) {
                 if (i != j) {
-                    matrix[i][j] = (int) (point.distance(euc.xPoints[j], euc.yPoints[j])+0.5);
+                    matrix[i][j] = (int) (point.distance(euc.xPoints[j], euc.yPoints[j]) + 0.5);
                     matrix[j][i] = matrix[i][j];
                 } else {
                     matrix[i][j] = -1;
@@ -203,9 +203,9 @@ public class DistanceMatrix implements TSPdata {
         final List<Integer>[] bests = new List[] { new LinkedList<>() };
         final long[] bestCost = new long[1];
         bestCost[0] = Long.MAX_VALUE;
-        Thread[] fredy = new Thread[threads];
+        Thread[] freddy = new Thread[threads];
         for (int i = 0; i < threads; i++) {
-            fredy[i] = new Thread(() -> {
+            freddy[i] = new Thread(() -> {
                 Random r = new Random();
                 ArrayList<Integer> arr = new ArrayList<>();
                 for (int j = 0; j < matrix.length; j++) {
@@ -214,7 +214,7 @@ public class DistanceMatrix implements TSPdata {
                 ArrayList<Integer> res = new ArrayList<>(arr);
                 long cost = Long.MAX_VALUE;
                 for (int j = 0; j < k; j++) {
-                    for (int in = matrix.length-1; in > 0; in--) {
+                    for (int in = matrix.length - 1; in > 0; in--) {
 
                         // Pick a random index from 0 to i
                         int jn = r.nextInt(in);
@@ -235,10 +235,10 @@ public class DistanceMatrix implements TSPdata {
                     }
                 }
             });
-            fredy[i].start();
+            freddy[i].start();
         }
         try {
-            for (Thread x : fredy) {
+            for (Thread x : freddy) {
                 x.join();
             }
         } catch (InterruptedException e) {
@@ -332,13 +332,12 @@ public class DistanceMatrix implements TSPdata {
         return res;
     }
 
-
-    public List<Integer> nearestBetter(int start){
-        return nearestBetterInner(start, new ArrayList<>(Collections.singletonList(start)),0);
+    public List<Integer> nearestBetter(int start) {
+        return nearestBetterInner(start, new ArrayList<>(Collections.singletonList(start)), 0);
     }
 
-    private List<Integer> nearestBetterInner(int start, List<Integer> visited, int depth){
-        if(depth == matrix.length-1){
+    private List<Integer> nearestBetterInner(int start, List<Integer> visited, int depth) {
+        if (depth == matrix.length - 1) {
             return visited;
         }
         long cost = Long.MAX_VALUE;
@@ -352,17 +351,17 @@ public class DistanceMatrix implements TSPdata {
                 amount = 1;
                 candidates.clear();
                 candidates.add(j);
-            }else if(cost == matrix[start][j]) {
+            } else if (cost == matrix[start][j]) {
                 amount++;
                 candidates.add(j);
             }
         }
-        if(amount == 1){
+        if (amount == 1) {
             List<Integer> foo = new ArrayList<>(visited);
             foo.add(candidates.get(0));
-            List<Integer> woohoo = nearestBetterInner(candidates.get(0),foo,depth+1);
+            List<Integer> woohoo = nearestBetterInner(candidates.get(0), foo, depth + 1);
             return woohoo;
-        }else{
+        } else {
             List<List<Integer>> bests = new LinkedList<>();
             for (Integer candidate : candidates) {
                 List<Integer> foo = new ArrayList<>(visited);
@@ -382,7 +381,7 @@ public class DistanceMatrix implements TSPdata {
         }
     }
 
-    public List<Integer> tabuSearch(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize){
+    public List<Integer> tabuSearch(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize) {
         int MAX_PATIENCE = 100;
         boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
         List<Integer> best = start;
@@ -402,17 +401,17 @@ public class DistanceMatrix implements TSPdata {
         int patience = 0;
         long startTime = System.currentTimeMillis();
         timeLimit = timeLimit + startTime;
-        while(System.currentTimeMillis() < timeLimit) {
+        while (System.currentTimeMillis() < timeLimit) {
             start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex);
             long cost = cost(start);
-            if(cost < bestCost){
+            if (cost < bestCost) {
                 best = start;
                 bestCost = cost;
                 patience = 0;
-            }else{
+            } else {
                 patience++;
             }
-            if(patience == MAX_PATIENCE){
+            if (patience == MAX_PATIENCE) {
                 start = kRandom(100);
                 patience = 0;
             }

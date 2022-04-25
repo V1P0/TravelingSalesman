@@ -2,13 +2,10 @@ import TabuStuff.TwoOptLikeGenerator;
 import helpers.DistanceMatrix;
 import helpers.Euclidean;
 import helpers.TSPLoader;
-import helpers.DistanceMatrix.types;
-
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,8 @@ od jakości rozwiązania startowego (losowe vs. najbliższy sąsiad)?
 
 public class AlgoTests {
 
-     String destination = "P:\\TravelingSalesman\\data";
+    String destination = "P:\\TravelingSalesman\\data";
+
     @Test
     public void testRandom() throws Exception {
         Euclidean eu = TSPLoader.returnScanner(new File("data/berlin52.tsp"));
@@ -90,13 +88,13 @@ public class AlgoTests {
         for (int k = 1; k <= 1000; k++) {
             List<Integer> list = dm.kRandom(100);
             long time = System.currentTimeMillis();
-            List<Integer> result = dm.twoOpt(list);
+            // List<Integer> result = dm.twoOpt(list);
             time = System.currentTimeMillis() - time;
             writer.println(dm.cost(list) + " , " + time);
         }
         List<Integer> list = dm.nearest();
         long time = System.currentTimeMillis();
-        List<Integer> result = dm.twoOpt(list);
+        // List<Integer> result = dm.twoOpt(list);
         time = System.currentTimeMillis() - time;
         System.out.println(time);
         writer.close();
@@ -157,7 +155,6 @@ public class AlgoTests {
         }
         writer.close();
     }
-
 
     @Test
     public void tabuTest() throws Exception {
