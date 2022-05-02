@@ -7,7 +7,7 @@ import static helpers.DistanceMatrix.reversePart;
 
 //TODO:
 //  Inne generowanie otoczenia
-// [] Implement swap (to nie to co reverse czyli zemina tylko dwa punkty)
+// [✅] Implement swap (to nie to co reverse czyli zemina tylko dwa punkty)
 // [] Implement inserta (przenosi element w dane miejsce)
 
 public class TwoOptLikeGenerator implements AreaGenerator {
