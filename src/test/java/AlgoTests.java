@@ -1,3 +1,4 @@
+import TabuStuff.InsertGenerator;
 import TabuStuff.TwoOptLikeGenerator;
 import helpers.DistanceMatrix;
 import helpers.Euclidean;

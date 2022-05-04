@@ -18,9 +18,9 @@ public class InsertGenerator implements AreaGenerator {
                 if (bannedMatrix[n][m])
                     continue;
 
-                int nPrev = n - 1;
-                int mPrev = m - 1;
-                int mNext = m + 1;
+                int nPrev = (n - 1 + costMatrix.length) % costMatrix.length;
+                int mPrev = (m - 1 + costMatrix.length) % costMatrix.length;
+                int mNext = (m + 1) % costMatrix.length;
                 int newCost;
 
                 int beforeSwapCost = currentCost - (costMatrix[result.get(nPrev)][result.get(n)]
@@ -41,7 +41,7 @@ public class InsertGenerator implements AreaGenerator {
         bannedMatrix[tabuList[tabuIndex][0]][tabuList[tabuIndex][1]] = false;
         bannedMatrix[tabuList[tabuIndex][1]][tabuList[tabuIndex][0]] = false;
         result.remove(bestSwap[1]);
-        result.add(bestSwap[0] - 1, bestSwap[1]);
+        result.add(bestSwap[0], bestSwap[1]);
         bannedMatrix[bestSwap[0]][bestSwap[1]] = true;
         bannedMatrix[bestSwap[1]][bestSwap[0]] = true;
         tabuList[tabuIndex][0] = bestSwap[0];

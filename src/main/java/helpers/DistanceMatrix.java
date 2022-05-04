@@ -386,6 +386,7 @@ public class DistanceMatrix implements TSPdata {
         boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
         List<Integer> best = start;
         long bestCost = cost(best);
+        long localBestCost = bestCost;
         // fill tabuMatrix with false
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
@@ -406,14 +407,19 @@ public class DistanceMatrix implements TSPdata {
             long cost = cost(start);
             if (cost < bestCost) {
                 best = start;
+                localBestCost = cost;
                 bestCost = cost;
                 patience = 0;
-            } else {
+            } else if(cost < localBestCost) {
+                localBestCost = cost;
+            }else{
                 patience++;
             }
             if (patience == MAX_PATIENCE) {
+                System.out.println("Patience exceeded");
                 start = kRandom(100);
                 patience = 0;
+                localBestCost = 0;
             }
             tabuIndex = (tabuIndex + 1) % tabuSize;
         }

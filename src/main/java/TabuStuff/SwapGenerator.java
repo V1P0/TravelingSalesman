@@ -17,10 +17,10 @@ public class SwapGenerator implements AreaGenerator {
             for (int m = n + 1; m < costMatrix.length; m++) {
                 if (bannedMatrix[n][m])
                     continue;
-                int nPrev = n - 1;
-                int nNext = n + 1;
-                int mPrev = m - 1;
-                int mNext = m + 1;
+                int nPrev = (n - 1 + costMatrix.length) % costMatrix.length;
+                int nNext = (n + 1)% costMatrix.length;
+                int mPrev = (m - 1 + costMatrix.length) % costMatrix.length;
+                int mNext = (m + 1)% costMatrix.length;
                 int newCost;
 
                 if ((n == mPrev && m == nNext) || nNext == mPrev) {
