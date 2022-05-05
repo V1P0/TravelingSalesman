@@ -169,7 +169,7 @@ public class AlgoTests {
         time = System.currentTimeMillis() - time;
         System.out.println(time);
         System.out.println(dm.cost(result));
-        List<Integer> res = dm.tabuSearch(xd, 1000, new TwoOptLikeGenerator(), 42);
+        List<Integer> res = dm.tabuSearch(xd, 1000, new InsertGenerator(), 42);
         System.out.println(res);
         System.out.println(dm.cost(res));
         System.out.println(res.size());

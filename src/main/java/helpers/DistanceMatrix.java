@@ -416,7 +416,6 @@ public class DistanceMatrix implements TSPdata {
                 patience++;
             }
             if (patience == MAX_PATIENCE) {
-                System.out.println("Patience exceeded");
                 start = kRandom(100);
                 patience = 0;
                 localBestCost = 0;

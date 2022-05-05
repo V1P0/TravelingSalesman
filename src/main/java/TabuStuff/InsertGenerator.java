@@ -40,8 +40,9 @@ public class InsertGenerator implements AreaGenerator {
         }
         bannedMatrix[tabuList[tabuIndex][0]][tabuList[tabuIndex][1]] = false;
         bannedMatrix[tabuList[tabuIndex][1]][tabuList[tabuIndex][0]] = false;
+        int temp = result.get(bestSwap[1]);
         result.remove(bestSwap[1]);
-        result.add(bestSwap[0], bestSwap[1]);
+        result.add(bestSwap[0], temp);
         bannedMatrix[bestSwap[0]][bestSwap[1]] = true;
         bannedMatrix[bestSwap[1]][bestSwap[0]] = true;
         tabuList[tabuIndex][0] = bestSwap[0];

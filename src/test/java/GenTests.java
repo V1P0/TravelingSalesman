@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenTests {
@@ -126,11 +127,12 @@ public class GenTests {
 
         PrintWriter writer = new PrintWriter(DESTINATION_PATH + "berlin_otoczenia.csv", StandardCharsets.UTF_8);
         long cost1 = 0, cost2 = 0, cost3 = 0, cost4 = 0, cost5 = 0;
-        for(int t = 10; t<1000; t+=200) {
+        for(int t = 1; t<=500; t*=3) {
             for (int i = 0; i < 10; i++) {
-                cost1 += berlin.cost(berlin.tabuSearch(berlin.kRandom(100), t, new TwoOptLikeGenerator(), 42));
-                cost2 += berlin.cost(berlin.tabuSearch(berlin.kRandom(100), t, new SwapGenerator(), 42));
-                cost3 += berlin.cost(berlin.tabuSearch(berlin.kRandom(100), t, new InsertGenerator(), 42));
+                List<Integer> start = berlin.kRandom(100);
+                cost1 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new TwoOptLikeGenerator(), 42));
+                cost2 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new SwapGenerator(), 42));
+                cost3 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new InsertGenerator(), 42));
             }
             System.out.println("Done with t = " + t);
             writer.println(t + "," + cost1/10 + "," + cost2/10 + "," + cost3/10);
