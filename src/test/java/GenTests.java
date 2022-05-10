@@ -23,8 +23,6 @@ public class GenTests {
         AreaGenerator threaded1 = new twoOptThreadedGenerator(1);
         AreaGenerator threaded6 = new twoOptThreadedGenerator(6);
 
-
-
         List<Integer> start = dm.kRandom(100);
         List<Integer> end = dm.kRandom(100);
 
@@ -41,8 +39,8 @@ public class GenTests {
             tabuList[i][1] = 0;
         }
         long time = System.currentTimeMillis();
-        for(int i = 0; i < 100; i++) {
-             end = normal.generateArea(start, dm.matrix, banned, tabuList, 0);
+        for (int i = 0; i < 100; i++) {
+            end = normal.generateArea(start, dm.matrix, banned, tabuList, 0);
         }
         System.out.println("Normal: " + (System.currentTimeMillis() - time) + "ms");
         System.out.println(end);
@@ -57,7 +55,7 @@ public class GenTests {
             tabuList[i][1] = 0;
         }
         time = System.currentTimeMillis();
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             end = threaded1.generateArea(start, dm.matrix, banned, tabuList, 0);
         }
         System.out.println("Threaded1: " + (System.currentTimeMillis() - time) + "ms");
@@ -74,7 +72,7 @@ public class GenTests {
             tabuList[i][1] = 0;
         }
         time = System.currentTimeMillis();
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             end = threaded6.generateArea(start, dm.matrix, banned, tabuList, 0);
         }
         System.out.println("Threaded6: " + (System.currentTimeMillis() - time) + "ms");
@@ -85,10 +83,11 @@ public class GenTests {
     public void threadTest() throws Exception {
         Euclidean eu = TSPLoader.returnScanner(new File("data/a280.tsp"));
         DistanceMatrix dm = new DistanceMatrix(1000, DistanceMatrix.types.SYMMETRIC);
-        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "multithreaded_two_opt_gen.csv", StandardCharsets.UTF_8);
+        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "multithreaded_two_opt_gen.csv",
+                StandardCharsets.UTF_8);
 
-        for(int n = 1; n<=10; n++) {
-            dm = new DistanceMatrix(n*100, DistanceMatrix.types.SYMMETRIC);
+        for (int n = 1; n <= 10; n++) {
+            dm = new DistanceMatrix(n * 100, DistanceMatrix.types.SYMMETRIC);
             for (int i = 1; i <= 12; i++) {
                 twoOptThreadedGenerator t = new twoOptThreadedGenerator(i);
                 List<Integer> start = dm.kRandom(100);
@@ -110,8 +109,7 @@ public class GenTests {
                 for (int m = 0; m < 100; m++) {
                     end = t.generateArea(end, dm.matrix, banned, tabuList, 0);
                 }
-                writer.println((n*100)+","+i + "," + (System.currentTimeMillis() - time));
-
+                writer.println((n * 100) + "," + i + "," + (System.currentTimeMillis() - time));
 
             }
             System.out.println("Done with n = " + n);
@@ -127,7 +125,7 @@ public class GenTests {
 
         PrintWriter writer = new PrintWriter(DESTINATION_PATH + "berlin_otoczenia.csv", StandardCharsets.UTF_8);
         long cost1 = 0, cost2 = 0, cost3 = 0, cost4 = 0, cost5 = 0;
-        for(int t = 1; t<=500; t*=3) {
+        for (int t = 10; t < 1000; t += 200) {
             for (int i = 0; i < 10; i++) {
                 List<Integer> start = berlin.kRandom(100);
                 cost1 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new TwoOptLikeGenerator(), 42));
@@ -135,7 +133,7 @@ public class GenTests {
                 cost3 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new InsertGenerator(), 42));
             }
             System.out.println("Done with t = " + t);
-            writer.println(t + "," + cost1/10 + "," + cost2/10 + "," + cost3/10);
+            writer.println(t + "," + cost1 / 10 + "," + cost2 / 10 + "," + cost3 / 10);
             cost1 = 0;
             cost2 = 0;
             cost3 = 0;
