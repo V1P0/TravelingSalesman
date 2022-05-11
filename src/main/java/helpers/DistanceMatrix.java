@@ -1,6 +1,7 @@
 package helpers;
 
 import TabuStuff.AreaGenerator;
+import TabuStuff.AreaGeneratorS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -423,7 +424,108 @@ public class DistanceMatrix implements TSPdata {
             tabuIndex = (tabuIndex + 1) % tabuSize;
         }
         return best;
+    }
 
+    public List<Integer> tabuSearchLog(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize, PrintWriter logFile, int maxPatience) {
+        int MAX_PATIENCE = maxPatience;
+        int kicks = 0;
+        boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
+        List<Integer> best = start;
+        long bestCost = cost(best);
+        long localBestCost = bestCost;
+        // fill tabuMatrix with false
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                tabuMatrix[i][j] = false;
+            }
+        }
+        int[][] tabuList = new int[tabuSize][2];
+        for (int i = 0; i < tabuList.length; i++) {
+            tabuList[i][0] = 0;
+            tabuList[i][1] = 0;
+        }
+        int tabuIndex = 0;
+        int patience = 0;
+        long startTime = System.currentTimeMillis();
+        timeLimit = timeLimit + startTime;
+        long currentTime = System.currentTimeMillis();
+        while (currentTime < timeLimit) {
+            start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex);
+            long cost = cost(start);
+            if (cost < bestCost) {
+                logFile.write((currentTime-startTime) + "," + bestCost + "\n");
+                best = start;
+                localBestCost = cost;
+                bestCost = cost;
+                patience = 0;
+            } else if(cost < localBestCost) {
+                localBestCost = cost;
+            }else{
+                patience++;
+            }
+            if (patience == MAX_PATIENCE) {
+                start = kRandom(100);
+                kicks++;
+                patience = 0;
+                localBestCost = 0;
+            }
+            tabuIndex = (tabuIndex + 1) % tabuSize;
+            currentTime = System.currentTimeMillis();
+        }
+        logFile.write((currentTime-startTime) + "," + bestCost + "\n");
+        System.out.println("Kicks: " + kicks);
+        return best;
+    }
+
+    public List<Integer> tabuSearchLog(List<Integer> start, long timeLimit, AreaGeneratorS gen, int tabuSize, PrintWriter logFile, int maxPatience) {
+        int MAX_PATIENCE = maxPatience;
+        int kicks = 0;
+        boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
+        List<Integer> best = start;
+        long bestCost = cost(best);
+        long localBestCost = bestCost;
+        // fill tabuMatrix with false
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                tabuMatrix[i][j] = false;
+            }
+        }
+        int[][] tabuList = new int[tabuSize][2];
+        for (int i = 0; i < tabuList.length; i++) {
+            tabuList[i][0] = 0;
+            tabuList[i][1] = 0;
+        }
+        int tabuIndex = 0;
+        int patience = 0;
+        long startTime = System.currentTimeMillis();
+        timeLimit = timeLimit + startTime;
+        long currentTime = System.currentTimeMillis();
+        while (currentTime < timeLimit) {
+            start = gen.generateArea(start, matrix, tabuMatrix, tabuList, tabuIndex, bestCost);
+            long cost = cost(start);
+            if (cost < bestCost) {
+                logFile.write((currentTime-startTime) + "," + bestCost + "\n");
+                best = start;
+                localBestCost = cost;
+                bestCost = cost;
+                patience = 0;
+            } else if(cost < localBestCost) {
+                localBestCost = cost;
+            }else{
+                patience++;
+            }
+            if (patience == MAX_PATIENCE) {
+                start = kRandom(100);
+                kicks++;
+                patience = 0;
+                localBestCost = 0;
+            }
+            tabuIndex = (tabuIndex + 1) % tabuSize;
+            currentTime = System.currentTimeMillis();
+        }
+        logFile.write((currentTime-startTime) + "," + bestCost + "\n");
+        System.out.println("Kicks: " + kicks);
+        return best;
     }
 
     public List<Integer> twoOptAcc(List<Integer> start) {

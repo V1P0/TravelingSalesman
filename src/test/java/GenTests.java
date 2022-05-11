@@ -5,6 +5,7 @@ import helpers.TSPLoader;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -122,22 +123,188 @@ public class GenTests {
         DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
         DistanceMatrix bier = new DistanceMatrix(TSPLoader.returnScanner(new File("data/bier127.tsp")));
         DistanceMatrix a280 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix ch130 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ch130.tsp")));
+        DistanceMatrix ring = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ring.tsp")));
+        long time = 5000;
+        List<Integer> start = berlin.kRandom(100);
+        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "berlin_reverse.csv", StandardCharsets.UTF_8);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "berlin_swap.csv", StandardCharsets.UTF_8);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new SwapGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "berlin_insert.csv", StandardCharsets.UTF_8);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new InsertGenerator(), 42, writer,100);
+        writer.close();
 
-        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "berlin_otoczenia.csv", StandardCharsets.UTF_8);
-        long cost1 = 0, cost2 = 0, cost3 = 0, cost4 = 0, cost5 = 0;
-        for (int t = 10; t < 1000; t += 200) {
-            for (int i = 0; i < 10; i++) {
-                List<Integer> start = berlin.kRandom(100);
-                cost1 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new TwoOptLikeGenerator(), 42));
-                cost2 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new SwapGenerator(), 42));
-                cost3 += berlin.cost(berlin.tabuSearch(new ArrayList<>(start), t, new InsertGenerator(), 42));
-            }
-            System.out.println("Done with t = " + t);
-            writer.println(t + "," + cost1 / 10 + "," + cost2 / 10 + "," + cost3 / 10);
-            cost1 = 0;
-            cost2 = 0;
-            cost3 = 0;
+        start = bier.kRandom(100);
+        writer = new PrintWriter(DESTINATION_PATH + "bier_reverse.csv", StandardCharsets.UTF_8);
+        bier.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "bier_swap.csv", StandardCharsets.UTF_8);
+        bier.tabuSearchLog(new ArrayList<>(start), time, new SwapGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "bier_insert.csv", StandardCharsets.UTF_8);
+        bier.tabuSearchLog(new ArrayList<>(start), time, new InsertGenerator(), 42, writer, 100);
+        writer.close();
+
+        start = a280.kRandom(100);
+        writer = new PrintWriter(DESTINATION_PATH + "a280_reverse.csv", StandardCharsets.UTF_8);
+        a280.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "a280_swap.csv", StandardCharsets.UTF_8);
+        a280.tabuSearchLog(new ArrayList<>(start), time, new SwapGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "a280_insert.csv", StandardCharsets.UTF_8);
+        a280.tabuSearchLog(new ArrayList<>(start), time, new InsertGenerator(), 42, writer, 100);
+        writer.close();
+
+        start = ch130.kRandom(100);
+        writer = new PrintWriter(DESTINATION_PATH + "ch130_reverse.csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "ch130_swap.csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new SwapGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "ch130_insert.csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new InsertGenerator(), 42, writer, 100);
+        writer.close();
+
+        start = ring.kRandom(100);
+        writer = new PrintWriter(DESTINATION_PATH + "ring_reverse.csv", StandardCharsets.UTF_8);
+        ring.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "ring_swap.csv", StandardCharsets.UTF_8);
+        ring.tabuSearchLog(new ArrayList<>(start), time, new SwapGenerator(), 42, writer, 100);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "ring_insert.csv", StandardCharsets.UTF_8);
+        ring.tabuSearchLog(new ArrayList<>(start), time, new InsertGenerator(), 42, writer, 100);
+        writer.close();
+
+    }
+
+    @Test
+    public void patienceTest() throws Exception {
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
+        DistanceMatrix bier = new DistanceMatrix(TSPLoader.returnScanner(new File("data/bier127.tsp")));
+        DistanceMatrix a280 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix ch130 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ch130.tsp")));
+        DistanceMatrix ring = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ring.tsp")));
+
+        int time = 500;
+        List<Integer> start = bier.kRandom(100);
+        for (int i = 10; i < 1000; i*=1.5) {
+            System.out.println(i);
+            PrintWriter writer = new PrintWriter(DESTINATION_PATH + "patience\\bier"+i+".csv", StandardCharsets.UTF_8);
+            bier.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, i);
+            writer.close();
         }
+        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "patience\\bier"+"max"+".csv", StandardCharsets.UTF_8);
+        bier.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, Integer.MAX_VALUE);
+        writer.close();
+
+        start = berlin.kRandom(100);
+        for (int i = 10; i < 1000; i*=1.5) {
+            System.out.println(i);
+            writer = new PrintWriter(DESTINATION_PATH + "patience\\berlin"+i+".csv", StandardCharsets.UTF_8);
+            berlin.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, i);
+            writer.close();
+        }
+        writer = new PrintWriter(DESTINATION_PATH + "patience\\berlin"+"max"+".csv", StandardCharsets.UTF_8);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, Integer.MAX_VALUE);
+        writer.close();
+
+        start = ch130.kRandom(100);
+        for (int i = 10; i < 1000; i*=1.5) {
+            System.out.println(i);
+            writer = new PrintWriter(DESTINATION_PATH + "patience\\ch130"+i+".csv", StandardCharsets.UTF_8);
+            ch130.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, i);
+            writer.close();
+        }
+        writer = new PrintWriter(DESTINATION_PATH + "patience\\ch130"+"max"+".csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, Integer.MAX_VALUE);
+        writer.close();
+
+        start = a280.kRandom(100);
+        for (int i = 10; i < 1000; i*=1.5) {
+            System.out.println(i);
+            writer = new PrintWriter(DESTINATION_PATH + "patience\\a280"+i+".csv", StandardCharsets.UTF_8);
+            a280.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, i);
+            writer.close();
+        }
+        writer = new PrintWriter(DESTINATION_PATH + "patience\\a280"+"max"+".csv", StandardCharsets.UTF_8);
+        a280.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 42, writer, Integer.MAX_VALUE);
+        writer.close();
+
+    }
+
+    @Test
+    public void test2() throws Exception {
+        DistanceMatrix dm = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
+
+        AreaGenerator ag = new TwoOptLikeGenerator();
+        AreaGeneratorS ags = new ReverseGeneratorS();
+
+        List<Integer> start = dm.kRandom(100);
+        List<Integer> end = dm.kRandom(100);
+
+        boolean[][] banned = new boolean[dm.matrix.length][dm.matrix.length];
+        int[][] tabuList = new int[5][2];
+        for (int i = 0; i < dm.matrix.length; i++) {
+            for (int j = 0; j < dm.matrix.length; j++) {
+                banned[i][j] = false;
+            }
+        }
+
+        for (int i = 0; i < tabuList.length; i++) {
+            tabuList[i][0] = 0;
+            tabuList[i][1] = 0;
+        }
+        int l = 0;
+        int c = 10000;
+        end = new ArrayList<>(start);
+        long time = System.currentTimeMillis();
+        for (int i = 0; i < c; i++) {
+            end = ag.generateArea(end, dm.matrix, banned, tabuList, l);
+            l = (l+1)%tabuList.length;
+            dm.cost(end);
+        }
+        System.out.println(System.currentTimeMillis() - time);
+        for (int i = 0; i < dm.matrix.length; i++) {
+            for (int j = 0; j < dm.matrix.length; j++) {
+                banned[i][j] = false;
+            }
+        }
+
+        for (int i = 0; i < tabuList.length; i++) {
+            tabuList[i][0] = 0;
+            tabuList[i][1] = 0;
+        }
+        l = 0;
+        end = new ArrayList<>(start);
+        time = System.currentTimeMillis();
+        for (int i = 0; i < c; i++) {
+            end = ags.generateArea(end, dm.matrix, banned, tabuList, l, dm.cost(end));
+            l = (l+1)%tabuList.length;
+        }
+        System.out.println(System.currentTimeMillis() - time);
+    }
+
+    @Test
+    public void aspirationTest() throws Exception {
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
+        DistanceMatrix bier = new DistanceMatrix(TSPLoader.returnScanner(new File("data/bier127.tsp")));
+        DistanceMatrix a280 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix ch130 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ch130.tsp")));
+        DistanceMatrix ring = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ring.tsp")));
+
+        int time = 500;
+        List<Integer> start = ch130.kRandom(100);
+        PrintWriter writer = new PrintWriter(DESTINATION_PATH + "aspiration_berlin.csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new ReverseGeneratorS(), 100, writer, Integer.MAX_VALUE);
+        writer.close();
+        writer = new PrintWriter(DESTINATION_PATH + "non_aspiration_berlin.csv", StandardCharsets.UTF_8);
+        ch130.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 100, writer, Integer.MAX_VALUE);
         writer.close();
     }
 }
