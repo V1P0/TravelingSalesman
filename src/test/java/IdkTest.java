@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class IdkTest {
 
     @Test
     public void WilcoxTestData0() throws Exception {
-        Euclidean eu = TSPLoader.returnScanner(new File("data/ch130.tsp"));
+        Euclidean eu = TSPLoader.returnScanner(new File("data/berlin52.tsp"));
         DistanceMatrix dm = new DistanceMatrix(eu);
         PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\Start.csv", StandardCharsets.UTF_8);
         for (int i = 0; i < 20; i++) {
@@ -185,5 +186,38 @@ public class IdkTest {
             writer.print(dm.cost(result) + ",");
         }
         writer.close();
+    }
+
+    @Test
+    public void tabuSizeTest() throws Exception {
+        DistanceMatrix a280 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix ch130 = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ch130.tsp")));
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
+
+        int time = 100;
+
+        for (int i = 1; i < 1000; i *= 2) {
+            PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestSwap\\tabuSizeSwap" + i + ".csv",
+                    StandardCharsets.UTF_8);
+            List<Integer> list = berlin.kRandom(1);
+            berlin.tabuSearchLog(new ArrayList<>(list), time, new InsertGenerator(), i, writer, Integer.MAX_VALUE);
+            writer.close();
+        }
+
+        for (int i = 1; i < 1000; i *= 2) {
+            PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestInsert\\tabuSizeInsert" + i + ".csv",
+                    StandardCharsets.UTF_8);
+            List<Integer> list = berlin.kRandom(1);
+            berlin.tabuSearchLog(new ArrayList<>(list), time, new InsertGenerator(), i, writer, Integer.MAX_VALUE);
+            writer.close();
+        }
+
+        for (int i = 1; i < 1000; i *= 2) {
+            PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestRevers\\tabuSizeReverse" + i + ".csv",
+                    StandardCharsets.UTF_8);
+            List<Integer> list = berlin.kRandom(1);
+            berlin.tabuSearchLog(new ArrayList<>(list), time, new InsertGenerator(), i, writer, Integer.MAX_VALUE);
+            writer.close();
+        }
     }
 }
