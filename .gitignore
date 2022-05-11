@@ -13,5 +13,6 @@ buildNumber.properties
 target/
 */*.iml
 *.class
-
+*.py
+*.csv
 */node_modules/
