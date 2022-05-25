@@ -299,12 +299,17 @@ public class GenTests {
         DistanceMatrix ring = new DistanceMatrix(TSPLoader.returnScanner(new File("data/ring.tsp")));
 
         int time = 500;
-        List<Integer> start = ch130.kRandom(100);
+        List<Integer> start = berlin.kRandom(100);
         PrintWriter writer = new PrintWriter(DESTINATION_PATH + "aspiration_berlin.csv", StandardCharsets.UTF_8);
-        ch130.tabuSearchLog(new ArrayList<>(start), time, new ReverseGeneratorS(), 100, writer, Integer.MAX_VALUE);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new ReverseGeneratorS(), 100, writer, Integer.MAX_VALUE);
         writer.close();
         writer = new PrintWriter(DESTINATION_PATH + "non_aspiration_berlin.csv", StandardCharsets.UTF_8);
-        ch130.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 100, writer, Integer.MAX_VALUE);
+        berlin.tabuSearchLog(new ArrayList<>(start), time, new TwoOptLikeGenerator(), 100, writer, Integer.MAX_VALUE);
         writer.close();
+    }
+
+    @Test
+    public void xdTest(){
+
     }
 }

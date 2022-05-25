@@ -1,5 +1,9 @@
 package helpers;
 
+import Genetic.Crossovers.Crossover;
+import Genetic.Killers.Killer;
+import Genetic.Mutators.Mutator;
+import Genetic.Population;
 import TabuStuff.AreaGenerator;
 import TabuStuff.AreaGeneratorS;
 import org.w3c.dom.Document;
@@ -645,4 +649,23 @@ public class DistanceMatrix implements TSPdata {
         return this.matrixToString;
     }
 
+    public List<Integer> genetic(Population population,
+                                 Mutator mutator,
+                                 Crossover crossover,
+                                 Killer killer,
+                                 double mutationChance,
+                                 long time){
+        population.setCrossover(crossover);
+        population.setMutator(mutator);
+        population.setMutationChance(mutationChance);
+        population.setKiller(killer);
+        long dueTime = System.currentTimeMillis()+time;
+        while(System.currentTimeMillis()<dueTime){
+            population.killWorst();
+            population.crossover();
+            population.mutate();
+            population.updateAges();
+        }
+        return population.getBestResult();
+    }
 }
