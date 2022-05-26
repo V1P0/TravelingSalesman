@@ -3,6 +3,7 @@ package Genetic;
 import Genetic.Crossovers.Crossover;
 import Genetic.Killers.Killer;
 import Genetic.Mutators.Mutator;
+import helpers.DistanceMatrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,25 @@ public class Population {
         pop.expectedSize = size;
         pop.costMatrix = costMatrix;
         for(int i = 0; i < size; i++){
+            pop.getSpecimens().add(Specimen.getRandomSpecimen(costMatrix));
+        }
+        return pop;
+    }
+
+    public static Population getTwoOptedPopulation(int size, DistanceMatrix dm, double twoOptPercent){
+        int[][] costMatrix = dm.matrix;
+        int twoOptSize = (int)(size*twoOptPercent);
+        Population pop = new Population();
+        pop.expectedSize = size;
+        pop.costMatrix = costMatrix;
+        for(int i = 0; i < twoOptSize; i++){
+            Specimen rand = Specimen.getRandomSpecimen(costMatrix);
+            List<Integer> newResult = dm.twoOptAcc(rand.getResult());
+            rand.setResult(newResult);
+            rand.setCost(Specimen.cost(newResult, costMatrix));
+            pop.getSpecimens().add(rand);
+        }
+        for(int i = twoOptSize; i< size; i++){
             pop.getSpecimens().add(Specimen.getRandomSpecimen(costMatrix));
         }
         return pop;
