@@ -388,7 +388,7 @@ public class DistanceMatrix implements TSPdata {
     }
 
     public List<Integer> tabuSearch(List<Integer> start, long timeLimit, AreaGenerator gen, int tabuSize) {
-        int MAX_PATIENCE = 100;
+        int MAX_PATIENCE = 50;
         boolean[][] tabuMatrix = new boolean[matrix.length][matrix.length];
         List<Integer> best = start;
         long bestCost = cost(best);
@@ -532,6 +532,7 @@ public class DistanceMatrix implements TSPdata {
         System.out.println("Kicks: " + kicks);
         return best;
     }
+
 
     public List<Integer> twoOptAcc(List<Integer> start) {
         List<Integer> result = new ArrayList<>(start);

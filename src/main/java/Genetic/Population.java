@@ -38,6 +38,10 @@ public class Population {
         return specimens;
     }
 
+    public int getExpectedSize(){
+        return expectedSize;
+    }
+
     public void setMutator(Mutator mutator){
         this.mutator = mutator;
     }
@@ -85,7 +89,7 @@ public class Population {
         if(killer == null){
             return;
         }
-        killer.kill(this, expectedSize);
+        killer.kill(this);
     }
 
     public void crossover(){

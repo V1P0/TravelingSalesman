@@ -174,4 +174,5 @@ public class AlgoTests {
         System.out.println(dm.cost(res));
         System.out.println(res.size());
     }
+
 }
