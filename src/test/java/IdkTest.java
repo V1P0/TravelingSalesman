@@ -196,7 +196,7 @@ public class IdkTest {
 
         int time = 100;
 
-        for (int i = 1; i < 1000; i *= 2) {
+        for (int i = 1; i < 1000; i *= 3) {
             PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestSwap\\tabuSizeSwap" + i + ".csv",
                     StandardCharsets.UTF_8);
             List<Integer> list = berlin.kRandom(1);
@@ -204,7 +204,7 @@ public class IdkTest {
             writer.close();
         }
 
-        for (int i = 1; i < 1000; i *= 2) {
+        for (int i = 1; i < 1000; i *= 3) {
             PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestInsert\\tabuSizeInsert" + i + ".csv",
                     StandardCharsets.UTF_8);
             List<Integer> list = berlin.kRandom(1);
@@ -212,7 +212,7 @@ public class IdkTest {
             writer.close();
         }
 
-        for (int i = 1; i < 1000; i *= 2) {
+        for (int i = 1; i < 1000; i *= 3) {
             PrintWriter writer = new PrintWriter("E:\\TravelingSalesman\\TabuTestRevers\\tabuSizeReverse" + i + ".csv",
                     StandardCharsets.UTF_8);
             List<Integer> list = berlin.kRandom(1);
