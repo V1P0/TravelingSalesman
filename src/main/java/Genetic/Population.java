@@ -17,13 +17,16 @@ public class Population {
     private double mutationChance;
     int[][] costMatrix;
     int expectedSize;
+    long year;
 
-    private Population(){}
+    private Population(){
+        year = 0;
+        specimens = new ArrayList<>();
+    }
 
     public static Population getRandomPopulation(int size, int[][] costMatrix){
         Population pop = new Population();
         pop.expectedSize = size;
-        pop.specimens = new ArrayList<>();
         pop.costMatrix = costMatrix;
         for(int i = 0; i < size; i++){
             pop.getSpecimens().add(Specimen.getRandomSpecimen(costMatrix));
@@ -48,13 +51,17 @@ public class Population {
     }
 
     public List<Integer> getBestResult(){
+        return getBestSpecimen().getResult();
+    }
+
+    public Specimen getBestSpecimen(){
         Specimen bestSpecimen = specimens.get(0);
         for(Specimen specimen : specimens){
             if(specimen.getCost() < bestSpecimen.getCost()){
                 bestSpecimen = specimen;
             }
         }
-        return bestSpecimen.getResult();
+        return bestSpecimen;
     }
 
     public void setMutationChance(double mutationChance){
@@ -67,9 +74,9 @@ public class Population {
         }
         Random r = new Random();
 
-        for(Specimen specimen : specimens){
+        for(int i = expectedSize/2; i < specimens.size(); i++){
             if(r.nextDouble() < mutationChance){
-                mutator.mutate(specimen, costMatrix);
+                mutator.mutate(specimens.get(i), costMatrix);
             }
         }
     }
@@ -107,6 +114,11 @@ public class Population {
         for(Specimen specimen : specimens){
             specimen.updateAge();
         }
+        year++;
+    }
+
+    public long getYear(){
+        return year;
     }
 
     public String toString(){
@@ -114,6 +126,7 @@ public class Population {
         for(Specimen specimen : specimens){
             sb.append(specimen.toString()).append("\n");
         }
+        sb.append("year:").append(year).append("\n");
         return sb.toString();
     }
 }

@@ -4,6 +4,7 @@ import Genetic.Crossovers.Crossover;
 import Genetic.Killers.Killer;
 import Genetic.Mutators.Mutator;
 import Genetic.Population;
+import Genetic.Specimen;
 import TabuStuff.AreaGenerator;
 import TabuStuff.AreaGeneratorS;
 import org.w3c.dom.Document;
@@ -659,13 +660,23 @@ public class DistanceMatrix implements TSPdata {
         population.setMutator(mutator);
         population.setMutationChance(mutationChance);
         population.setKiller(killer);
+        long currentCost = Long.MAX_VALUE;
+        long year = 0;
         long dueTime = System.currentTimeMillis()+time;
         while(System.currentTimeMillis()<dueTime){
             population.killWorst();
             population.crossover();
             population.mutate();
             population.updateAges();
+            /*Specimen best = population.getBestSpecimen();
+            if(best.getCost()<currentCost){
+                currentCost = best.getCost();
+                System.out.println(best);y
+                System.out.println("year: "+year);
+            }*/
+            year++;
         }
+        System.out.println(population);
         return population.getBestResult();
     }
 }
