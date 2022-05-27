@@ -16,6 +16,7 @@ public class Population {
     int[][] costMatrix;
     int expectedSize;
     long year;
+    public Specimen overallBest;
 
     private Population(){
         year = 0;
@@ -26,6 +27,7 @@ public class Population {
         Population pop = new Population();
         pop.expectedSize = size;
         pop.costMatrix = costMatrix;
+        pop.overallBest = Specimen.getRandomSpecimen(costMatrix);
         for(int i = 0; i < size; i++){
             pop.getSpecimens().add(Specimen.getRandomSpecimen(costMatrix));
         }
@@ -136,6 +138,10 @@ public class Population {
             specimen.updateAge();
         }
         year++;
+        Specimen bk = getBestSpecimen();
+        if(bk.getCost() < overallBest.getCost()){
+            overallBest = bk;
+        }
     }
 
     public long getYear(){

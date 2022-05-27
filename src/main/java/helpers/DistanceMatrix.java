@@ -678,7 +678,7 @@ public class DistanceMatrix implements TSPdata {
             year++;
         }
         //System.out.println(population);
-        return population.getBestResult();
+        return population.overallBest.getResult();
     }
 
     public List<Integer> island_genetic(Population[] populations,
