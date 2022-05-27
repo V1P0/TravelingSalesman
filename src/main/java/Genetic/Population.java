@@ -5,10 +5,7 @@ import Genetic.Killers.Killer;
 import Genetic.Mutators.Mutator;
 import helpers.DistanceMatrix;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Population {
     private List<Specimen> specimens;
@@ -152,5 +149,27 @@ public class Population {
         }
         sb.append("year:").append(year).append("\n");
         return sb.toString();
+    }
+
+    public List<Specimen> getBestPercent(double percent){
+        getSpecimens().sort((s1, s2) -> (int) (s1.getCost() - s2.getCost()));
+        List<Specimen> bests = new ArrayList<>(getSpecimens().subList(0, (int)(expectedSize*percent)));
+        specimens = new ArrayList<>(specimens.subList((int)(expectedSize*percent), specimens.size()));
+        return bests;
+    }
+
+    public static void shuffle_populations(double percent, Population... pops){
+        List<Integer> permutation = new ArrayList<>();
+        for(int i = 0; i< pops.length; i++){
+            permutation.add(i);
+        }
+        Collections.shuffle(permutation);
+        List<List<Specimen>> bests = new ArrayList<>();
+        for (int i = 0; i< pops.length; i++) {
+            bests.add(pops[i].getBestPercent(percent));
+        }
+        for(int i = 0; i< pops.length; i++){
+            pops[permutation.get(i)].getSpecimens().addAll(bests.get(permutation.get((i+1)%pops.length)));
+        }
     }
 }

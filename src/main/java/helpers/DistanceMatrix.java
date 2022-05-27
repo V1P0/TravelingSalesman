@@ -677,7 +677,50 @@ public class DistanceMatrix implements TSPdata {
             }*/
             year++;
         }
-        System.out.println(population);
+        //System.out.println(population);
         return population.getBestResult();
+    }
+
+    public List<Integer> island_genetic(Population[] populations,
+                                        Mutator[] mutators,
+                                        Crossover[] crossovers,
+                                        Killer[] killers,
+                                        double[] mutation_chances,
+                                        long iter_time,
+                                        int iterations){
+        Thread[] islands = new Thread[populations.length];
+        for(int i = 0; i< iterations; i++){
+            for(int k = 0; k< islands.length; k++){
+                final int kf = k;
+                islands[k] = new Thread(()->{
+                    genetic(populations[kf],
+                            mutators[kf],
+                            crossovers[kf],
+                            killers[kf],
+                            mutation_chances[kf],
+                            iter_time
+                            );
+                });
+                islands[k].start();
+            }
+            for(Thread island:islands){
+                try {
+                    island.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            Population.shuffle_populations(0.1, populations);
+        }
+        List<Integer> result = new ArrayList<>();
+        long cost = Long.MAX_VALUE;
+        for(Population pop: populations){
+            Specimen xd = pop.getBestSpecimen();
+            if(xd.getCost()< cost){
+                result = xd.getResult();
+                cost = xd.getCost();
+            }
+        }
+        return result;
     }
 }
