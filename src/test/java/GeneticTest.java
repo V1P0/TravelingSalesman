@@ -1,10 +1,7 @@
 import Genetic.*;
 import Genetic.Crossovers.Crossover;
 import Genetic.Crossovers.OXCrossover;
-import Genetic.Killers.Killer;
-import Genetic.Killers.NaturalKiller;
-import Genetic.Killers.PureCostKiller;
-import Genetic.Killers.PureCostStagnationKiller;
+import Genetic.Killers.*;
 import Genetic.Mutators.*;
 import TabuStuff.TwoOptLikeGenerator;
 import helpers.DistanceMatrix;
@@ -38,14 +35,14 @@ public class GeneticTest {
 
     @Test
     public void hawaiiTest() throws Exception{
-        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
         List<Integer> result = berlin.island_genetic(
                 new Population[]{
-                        Population.getRandomPopulation(30, berlin.matrix),
-                        Population.getTwoOptedPopulation(30, berlin, 0.2),
-                        Population.getTwoOptedPopulation(30, berlin, 0.6),
-                        Population.getRandomPopulation(30, berlin.matrix),
-                        Population.getTwoOptedPopulation(30, berlin, 0.1)
+                        Population.getRandomPopulation(50, berlin.matrix),
+                        Population.getTwoOptedPopulation(50, berlin, 0.2),
+                        Population.getTwoOptedPopulation(50, berlin, 0.6),
+                        Population.getRandomPopulation(50, berlin.matrix),
+                        Population.getTwoOptedPopulation(50, berlin, 0.1)
                 },
                 new Mutator[]{
                         new RandomSwapMutator(),
@@ -73,10 +70,10 @@ public class GeneticTest {
                 },
                 new Killer[]{
                         new PureCostKiller(),
-                        new PureCostKiller(),
-                        new PureCostKiller(),
-                        new PureCostKiller(),
-                        new PureCostKiller()
+                        new PureCostStagnationKiller(),
+                        new NaturalKiller(),
+                        new NaturalKiller(),
+                        new PureCostStagnationKiller()
                 },
                 new double[]{
                         0.3,
@@ -120,10 +117,9 @@ public class GeneticTest {
                         new RandomSwapMutator(),
                         new TwoOptMutator()),
                 new OXCrossover(),
-                new NaturalKiller(),
+                new TournamentKiller(),
                 0.4,
-                1000);
-        System.out.println(x);
+                10000);
         System.out.println(x.getSpecimens().size());
         System.out.println(berlin.cost(result));
     }
@@ -143,7 +139,7 @@ public class GeneticTest {
                         new BestReverseMutator(),
                         new RandomSwapMutator()),
                 new OXCrossover(),
-                new PureCostKiller(),
+                new TournamentKiller(),
                 0.3,
                 10000,
                 writer1);
@@ -176,6 +172,49 @@ public class GeneticTest {
         writer2.close();
         writer3.close();
 
+    }
+
+    @Test
+    public void bigTest() throws Exception {
+        String PATH = "E:\\PycharmProjects\\wykresiki\\";
+        DistanceMatrix a = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        Population x1 = Population.getRandomPopulation(50, a.matrix);
+        for(int i = 0; i< 100; i++){
+            System.out.print("\riteration:"+i);
+            PrintWriter writer1 = new PrintWriter(PATH+"pure" + i + ".csv");
+            PrintWriter writer2 = new PrintWriter(PATH+"natural" +i+".csv");
+            PrintWriter writer3 = new PrintWriter(PATH+"pure_stagnation"+i+".csv");
+            a.genetic_log((Population) x1.clone(),
+                    new BagMutator(
+                            new BestReverseMutator(),
+                            new RandomSwapMutator()),
+                    new OXCrossover(),
+                    new PureCostKiller(),
+                    0.3,
+                    10000,
+                    writer1);
+            a.genetic_log((Population) x1.clone(),
+                    new BagMutator(
+                            new BestReverseMutator(),
+                            new RandomSwapMutator()),
+                    new OXCrossover(),
+                    new NaturalKiller(),
+                    0.3,
+                    10000,
+                    writer2);
+            a.genetic_log((Population) x1.clone(),
+                    new BagMutator(
+                            new BestReverseMutator(),
+                            new RandomSwapMutator()),
+                    new OXCrossover(),
+                    new PureCostStagnationKiller(),
+                    0.3,
+                    10000,
+                    writer3);
+            writer1.close();
+            writer2.close();
+            writer3.close();
+        }
     }
 }
 

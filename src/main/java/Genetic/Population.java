@@ -40,6 +40,7 @@ public class Population implements Cloneable{
         Population pop = new Population();
         pop.expectedSize = size;
         pop.costMatrix = costMatrix;
+        pop.overallBest = Specimen.getRandomSpecimen(costMatrix);
         for(int i = 0; i < twoOptSize; i++){
             Specimen rand = Specimen.getRandomSpecimen(costMatrix);
             List<Integer> newResult = dm.twoOptAcc(rand.getResult());
