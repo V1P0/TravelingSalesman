@@ -663,8 +663,10 @@ public class DistanceMatrix implements TSPdata {
         population.setKiller(killer);
         long currentCost = Long.MAX_VALUE;
         long year = 0;
-        long dueTime = System.currentTimeMillis()+time;
-        while(System.currentTimeMillis()<dueTime){
+        long startTime = System.currentTimeMillis()+time;
+        long dueTime = startTime+time;
+        long currentTime = System.currentTimeMillis();
+        while(currentTime<dueTime){
             population.killWorst();
             population.crossover();
             population.mutate();
@@ -676,6 +678,36 @@ public class DistanceMatrix implements TSPdata {
                 System.out.println("year: "+year);
             }*/
             year++;
+            currentTime = System.currentTimeMillis();
+        }
+        //System.out.println(population);
+        return population.overallBest.getResult();
+    }
+
+    public List<Integer> genetic_log(Population population,
+                                     Mutator mutator,
+                                     Crossover crossover,
+                                     Killer killer,
+                                     double mutationChance,
+                                     long time,
+                                     PrintWriter writer){
+        population.setCrossover(crossover);
+        population.setMutator(mutator);
+        population.setMutationChance(mutationChance);
+        population.setKiller(killer);
+        long year = 0;
+        long startTime = System.currentTimeMillis();
+        long dueTime = startTime+time;
+        long currentTime = System.currentTimeMillis();
+        while(currentTime<dueTime){
+            population.killWorst();
+            population.crossover();
+            population.mutate();
+            population.updateAges();
+            Specimen best = population.getBestSpecimen();
+            writer.println((currentTime-startTime) + ";" + best.getCost() + ";" + year + ";" + population.getSpecimens().size()+";"+population.getAverageAge() + ";"+population.overallBest.getCost());
+            year++;
+            currentTime = System.currentTimeMillis();
         }
         //System.out.println(population);
         return population.overallBest.getResult();

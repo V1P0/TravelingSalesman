@@ -4,6 +4,7 @@ import Genetic.Crossovers.OXCrossover;
 import Genetic.Killers.Killer;
 import Genetic.Killers.NaturalKiller;
 import Genetic.Killers.PureCostKiller;
+import Genetic.Killers.PureCostStagnationKiller;
 import Genetic.Mutators.*;
 import TabuStuff.TwoOptLikeGenerator;
 import helpers.DistanceMatrix;
@@ -11,6 +12,9 @@ import helpers.TSPLoader;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.List;
 
 public class GeneticTest {
@@ -107,8 +111,8 @@ public class GeneticTest {
 
     @Test
     public void koxTest() throws Exception {
-        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/berlin52.tsp")));
-        Population x = Population.getRandomPopulation(30, berlin.matrix);
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        Population x = Population.getRandomPopulation(50, berlin.matrix);
         List<Integer> result = berlin.genetic(
                 x,
                 new BagMutator(
@@ -118,9 +122,60 @@ public class GeneticTest {
                 new OXCrossover(),
                 new NaturalKiller(),
                 0.4,
-                500);
+                1000);
         System.out.println(x);
+        System.out.println(x.getSpecimens().size());
         System.out.println(berlin.cost(result));
+    }
+
+    @Test
+    public void naturalVsCostTest() throws Exception {
+        String PATH = "E:\\PycharmProjects\\wykresiki\\";
+        DistanceMatrix a = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        Population x1 = Population.getRandomPopulation(50, a.matrix);
+        Population x2 = (Population) x1.clone();
+        Population x3 = (Population) x1.clone();
+        PrintWriter writer1 = new PrintWriter(PATH+"pure.csv");
+        PrintWriter writer2 = new PrintWriter(PATH+"natural.csv");
+        PrintWriter writer3 = new PrintWriter(PATH+"pure_stagnation.csv");
+        a.genetic_log(x1,
+                new BagMutator(
+                        new BestReverseMutator(),
+                        new RandomSwapMutator()),
+                new OXCrossover(),
+                new PureCostKiller(),
+                0.3,
+                10000,
+                writer1);
+        System.out.println(x1.overallBest.getCost());
+        System.out.println(x1.getSpecimens().size());
+        System.out.println();
+        a.genetic_log(x2,
+                new BagMutator(
+                        new BestReverseMutator(),
+                        new RandomSwapMutator()),
+                new OXCrossover(),
+                new NaturalKiller(),
+                0.3,
+                10000,
+                writer2);
+        System.out.println(x2.overallBest.getCost());
+        System.out.println(x2.getSpecimens().size());
+        a.genetic_log(x3,
+                new BagMutator(
+                        new BestReverseMutator(),
+                        new RandomSwapMutator()),
+                new OXCrossover(),
+                new PureCostStagnationKiller(),
+                0.3,
+                10000,
+                writer3);
+        System.out.println(x3.overallBest.getCost());
+        System.out.println(x3.getSpecimens().size());
+        writer1.close();
+        writer2.close();
+        writer3.close();
+
     }
 }
 

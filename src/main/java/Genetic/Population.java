@@ -7,13 +7,13 @@ import helpers.DistanceMatrix;
 
 import java.util.*;
 
-public class Population {
+public class Population implements Cloneable{
     private List<Specimen> specimens;
     private Mutator mutator;
     private Crossover crossover;
     private Killer killer;
     private double mutationChance;
-    int[][] costMatrix;
+    public int[][] costMatrix;
     int expectedSize;
     long year;
     public Specimen overallBest;
@@ -177,5 +177,27 @@ public class Population {
         for(int i = 0; i< pops.length; i++){
             pops[permutation.get(i)].getSpecimens().addAll(bests.get(permutation.get((i+1)%pops.length)));
         }
+    }
+
+    public int getAverageAge(){
+        int age = 0;
+        int size = 0;
+        for(Specimen s : specimens){
+            age+=s.getAge();
+            size++;
+        }
+        return age/size;
+    }
+
+    @Override
+    public Object clone(){
+        Population pop = null;
+        try{
+            pop = (Population) super.clone();
+            pop.specimens = new ArrayList<>(specimens);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return pop;
     }
 }

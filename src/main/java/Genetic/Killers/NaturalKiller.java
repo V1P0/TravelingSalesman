@@ -8,24 +8,41 @@ import java.util.List;
 import java.util.Random;
 
 public class NaturalKiller implements Killer{
+
+    boolean first;
+
     @Override
     public void kill(Population population) {
+        first = true;
         Random rand = new Random();
         long bc = population.getBestSpecimen().getCost();
         int size = population.getSpecimens().size();
+        int threshold = (int)(0.7*size);
         List<Specimen> toDelete = new ArrayList<>();
+        int count = 0;
         for(Specimen specimen: population.getSpecimens()){
             double prob = deathFunction(bc, specimen.getCost(), specimen.getAge(), size, population.getExpectedSize());
             if(prob > rand.nextDouble()){
                 toDelete.add(specimen);
+                count++;
+                if(count > threshold){
+                    break;
+                }
             }
         }
         population.getSpecimens().removeAll(toDelete);
     }
 
     private double deathFunction(long bc, long c, long age, int size, int expectedSize){
-        double bias = 0.5;
-        return Math.tanh((costFunction(bc, c)*ageFunction(age) + bias)*(size/(double)expectedSize));
+        double bias = 0.1;
+        if(c == bc && first){
+            first = false;
+            return 0;
+        }
+        double val1 = costFunction(bc, c);
+        double val2 = ageFunction(age);
+        //System.out.println(val1*10 + " ; " + val2);
+        return Math.tanh((val1*10 + val2 + bias))*(size/(double)expectedSize);
     }
 
     private double costFunction(long bc, long c){
@@ -38,5 +55,4 @@ public class NaturalKiller implements Killer{
         double c = 0.326663;
         return a*age*age+b*age+c;
     }
-
 }
