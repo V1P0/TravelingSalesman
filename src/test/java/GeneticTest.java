@@ -35,7 +35,7 @@ public class GeneticTest {
 
     @Test
     public void hawaiiTest() throws Exception{
-        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/bier127.tsp")));
         List<Integer> result = berlin.island_genetic(
                 new Population[]{
                         Population.getRandomPopulation(50, berlin.matrix),
@@ -71,7 +71,7 @@ public class GeneticTest {
                 new Killer[]{
                         new PureCostKiller(),
                         new PureCostStagnationKiller(),
-                        new NaturalKiller(),
+                        new TournamentKiller(),
                         new NaturalKiller(),
                         new PureCostStagnationKiller()
                 },
@@ -117,9 +117,9 @@ public class GeneticTest {
                         new RandomSwapMutator(),
                         new TwoOptMutator()),
                 new OXCrossover(),
-                new TournamentKiller(),
+                new RouletteKiller(),
                 0.4,
-                10000);
+                3000);
         System.out.println(x.getSpecimens().size());
         System.out.println(berlin.cost(result));
     }
@@ -127,47 +127,63 @@ public class GeneticTest {
     @Test
     public void naturalVsCostTest() throws Exception {
         String PATH = "E:\\PycharmProjects\\wykresiki\\";
-        DistanceMatrix a = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
+        DistanceMatrix a = new DistanceMatrix(TSPLoader.returnScanner(new File("data/bier127.tsp")));
         Population x1 = Population.getRandomPopulation(50, a.matrix);
         Population x2 = (Population) x1.clone();
         Population x3 = (Population) x1.clone();
+        Population x4 = (Population) x1.clone();
         PrintWriter writer1 = new PrintWriter(PATH+"pure.csv");
         PrintWriter writer2 = new PrintWriter(PATH+"natural.csv");
         PrintWriter writer3 = new PrintWriter(PATH+"pure_stagnation.csv");
-        a.genetic_log(x1,
+        long time = 3000;
+        a.genetic(x1,
                 new BagMutator(
                         new BestReverseMutator(),
                         new RandomSwapMutator()),
                 new OXCrossover(),
                 new TournamentKiller(),
                 0.3,
-                10000,
-                writer1);
+                time);
         System.out.println(x1.overallBest.getCost());
         System.out.println(x1.getSpecimens().size());
+        System.out.println(x1.getYear());
         System.out.println();
-        a.genetic_log(x2,
+        a.genetic(x2,
                 new BagMutator(
                         new BestReverseMutator(),
                         new RandomSwapMutator()),
                 new OXCrossover(),
                 new NaturalKiller(),
                 0.3,
-                10000,
-                writer2);
+                time);
         System.out.println(x2.overallBest.getCost());
         System.out.println(x2.getSpecimens().size());
-        a.genetic_log(x3,
+        System.out.println(x2.getYear());
+        System.out.println();
+        a.genetic(x3,
                 new BagMutator(
                         new BestReverseMutator(),
                         new RandomSwapMutator()),
                 new OXCrossover(),
                 new PureCostStagnationKiller(),
                 0.3,
-                10000,
-                writer3);
+                time);
         System.out.println(x3.overallBest.getCost());
         System.out.println(x3.getSpecimens().size());
+        System.out.println(x3.getYear());
+        System.out.println();
+        a.genetic(x4,
+                new BagMutator(
+                        new BestReverseMutator(),
+                        new RandomSwapMutator()),
+                new OXCrossover(),
+                new RouletteKiller(),
+                0.3,
+                time);
+        System.out.println(x4.overallBest.getCost());
+        System.out.println(x4.getSpecimens().size());
+        System.out.println(x4.getYear());
+        System.out.println();
         writer1.close();
         writer2.close();
         writer3.close();

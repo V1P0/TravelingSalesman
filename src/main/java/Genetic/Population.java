@@ -195,7 +195,10 @@ public class Population implements Cloneable{
         Population pop = null;
         try{
             pop = (Population) super.clone();
-            pop.specimens = new ArrayList<>(specimens);
+            pop.specimens = new ArrayList<>();
+            for(Specimen s: specimens){
+                pop.specimens.add((Specimen)s.clone());
+            }
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

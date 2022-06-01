@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Specimen {
+public class Specimen implements Cloneable{
     List<Integer> result;
     long cost;
     int age;
@@ -71,5 +71,13 @@ public class Specimen {
 
     public String toString(){
         return "Specimen: " + result + "\ncost: " + cost + " age: " + age;
+    }
+
+    @Override
+    public Object clone(){
+        Specimen ns = new Specimen();
+        ns.setResult(new ArrayList<>(result));
+        ns.setCost(cost);
+        return ns;
     }
 }
