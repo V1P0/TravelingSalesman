@@ -114,7 +114,7 @@ public class WorkingController implements Initializable {
 
     public void saveFile() {
         if (matrix != null) {
-            matrix.save(matrix.toString() + ".dm");
+            matrix.save(matrix + ".dm");
         }
         if (euc != null) {
             euc.save(euc.toString());

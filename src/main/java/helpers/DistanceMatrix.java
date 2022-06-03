@@ -37,7 +37,7 @@ public class DistanceMatrix implements TSPdata {
      */
     public enum types {
         SYMMETRIC,
-        ASYMMETRIC;
+        ASYMMETRIC
     }
 
     /**
