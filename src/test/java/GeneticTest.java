@@ -1,6 +1,8 @@
 import Genetic.*;
+import Genetic.Crossovers.CXCrossover;
 import Genetic.Crossovers.Crossover;
 import Genetic.Crossovers.MOCCrossover;
+// import Genetic.Crossovers.OX1Crossover;
 import Genetic.Crossovers.OXCrossover;
 import Genetic.Crossovers.PMXCrossover;
 import Genetic.Killers.*;
@@ -125,10 +127,10 @@ public class GeneticTest {
                                                 new BestReverseMutator(),
                                                 new RandomSwapMutator(),
                                                 new TwoOptMutator()),
-                                new MOCCrossover(),
+                                new CXCrossover(),
                                 new RouletteKiller(),
                                 0.4,
-                                3000);
+                                100);
                 System.out.println(x.getSpecimens().size());
                 System.out.println(berlin.cost(result));*/
                 x.setCrossover(new PMXCrossover());

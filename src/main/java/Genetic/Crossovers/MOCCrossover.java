@@ -111,8 +111,8 @@ public class MOCCrossover implements Crossover {
                 }
             }
         }
-        // System.out.println("res1: " + res1);
-        // System.out.println("res2: " + res2);
+        System.out.println("res1: " + res1);
+        System.out.println("res2: " + res2);
         // Move elements from res1 and res2 to resChild1 and resChild2
         for (int i = 0; i < res1.size(); i++) {
             resChild1[i] = res1.get(i);
@@ -131,3 +131,4 @@ public class MOCCrossover implements Crossover {
     }
 
 }
+// 23125
