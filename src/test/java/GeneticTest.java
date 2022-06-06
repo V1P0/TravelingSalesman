@@ -54,19 +54,19 @@ public class GeneticTest {
                                                 new RandomSwapMutator(),
                                                 new BestReverseMutator(),
                                                 new BagMutator(
-                                                        new BestReverseMutator(),
-                                                        new RandomSwapMutator(),
-                                                        new SequentialMutator(
+                                                                new BestReverseMutator(),
                                                                 new RandomSwapMutator(),
-                                                                new TwoOptMutator())),
+                                                                new SequentialMutator(
+                                                                                new RandomSwapMutator(),
+                                                                                new TwoOptMutator())),
                                                 new BagMutator(
                                                                 new BestReverseMutator(),
                                                                 new RandomSwapMutator()),
                                                 new BagMutator(
-                                                        new SequentialMutator(
-                                                                new RandomSwapMutator(),
-                                                                new TwoOptMutator()),
-                                                        new RandomSwapMutator())
+                                                                new SequentialMutator(
+                                                                                new RandomSwapMutator(),
+                                                                                new TwoOptMutator()),
+                                                                new RandomSwapMutator())
                                 },
                                 new Crossover[] {
                                                 new OXCrossover(),
@@ -104,12 +104,11 @@ public class GeneticTest {
                                 x,
                                 new BagMutator(
                                                 new BestReverseMutator(),
-                                                new RandomSwapMutator()
-                                ),
-                                new PMXCrossover(),
+                                                new RandomSwapMutator()),
+                                new MOCCrossover(),
                                 new NaturalKiller(),
                                 0.3,
-                                10000);
+                                3000);
                 System.out.println(x.getSpecimens().size());
                 System.out.println(berlin.cost(result));
         }
@@ -121,29 +120,31 @@ public class GeneticTest {
                 int[] seen = new int[berlin.matrix.length];
                 Arrays.fill(seen, 0);
                 System.out.println(x);
-                /*List<Integer> result = berlin.genetic(
-                                x,
-                                new BagMutator(
-                                                new BestReverseMutator(),
-                                                new RandomSwapMutator(),
-                                                new TwoOptMutator()),
-                                new CXCrossover(),
-                                new RouletteKiller(),
-                                0.4,
-                                100);
-                System.out.println(x.getSpecimens().size());
-                System.out.println(berlin.cost(result));*/
+                /*
+                 * List<Integer> result = berlin.genetic(
+                 * x,
+                 * new BagMutator(
+                 * new BestReverseMutator(),
+                 * new RandomSwapMutator(),
+                 * new TwoOptMutator()),
+                 * new CXCrossover(),
+                 * new RouletteKiller(),
+                 * 0.4,
+                 * 100);
+                 * System.out.println(x.getSpecimens().size());
+                 * System.out.println(berlin.cost(result));
+                 */
                 x.setCrossover(new PMXCrossover());
                 x.crossover();
-                for(Specimen s : x.getSpecimens()) {
-                        for(int i : s.getResult()) {
+                for (Specimen s : x.getSpecimens()) {
+                        for (int i : s.getResult()) {
                                 seen[i]++;
                         }
-                        for(int i = 0; i< seen.length; i++) {
-                                if(seen[i] > 1) {
+                        for (int i = 0; i < seen.length; i++) {
+                                if (seen[i] > 1) {
                                         System.out.println("more than one in " + i);
                                 }
-                                if(seen[i] == 0) {
+                                if (seen[i] == 0) {
                                         System.out.println("no one in " + i);
                                 }
                         }

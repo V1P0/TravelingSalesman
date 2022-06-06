@@ -27,99 +27,100 @@ public class MOCCrossover implements Crossover {
         List<Integer> res2Right = new ArrayList<Integer>(res2.subList(pivot1, res2.size()));
 
         // System.out.println("res1Left: " + res1Left);
+        // System.out.println("res1LeftRight: " + res1LeftRight);
         // System.out.println("res1Right: " + res1Right);
         // System.out.println("res2Left: " + res2Left);
-        // System.out.println("res2Right: " + res2Right);
-        // System.out.println("res1LeftRight: " + res1LeftRight);
-        // System.out.println("res1: " + res1);
         // System.out.println("res2LeftRight: " + res2LeftRight);
-
-        // Remove from res1 and res2 all elements from secound half of res1Left and
-        // res2Left
-        for (int i = res1.indexOf(res1LeftRight.get(0)); i <= res1
-                .indexOf(res1LeftRight.get(res1LeftRight.size() - 1)); i++) {
-            res1.set(i, null);
-        }
-        for (int i = res2.indexOf(res2LeftRight.get(0)); i <= res2
-                .indexOf(res2LeftRight.get(res2LeftRight.size() - 1)); i++) {
-            res2.set(i, null);
-        }
-
-        // System.out.println("res1: " + res1);
-        // System.out.println(res1);
-        // System.out.println(res2);
-        // Delete all elements which are'nt in sound half of res1Left and res2Left
-        // System.out.println(res1Left.size() - res1LeftRight.size());
-        for (int i = res1Left.size() - res1LeftRight.size(); i < res1.size(); i++) {
-            if (res2LeftRight.indexOf(res1.get(i)) == -1) {
-                res1.set(i, null);
-            }
-        }
-        for (int i = res2Left.size() / 2; i < res2.size(); i++) {
-            if (res1LeftRight.indexOf(res2.get(i)) == -1) {
-                res2.set(i, null);
-            }
-        }
-        // System.out.println("res1: " + res1);
         // System.out.println("res2Right: " + res2Right);
 
-        // And now we can add elements from res2Right and res1Right to res1 and res2
-        int count = 0;
-        // System.out.println(res2Right.get(res2Right.size()));
-        for (int i = 0; i < res1.size(); i++) {
-            if (res1.get(i) == null && count < res2Right.size()) {
-                if (res1.indexOf(res2Right.get(count)) == -1) {
-                    res1.set(i, res2Right.get(count));
-                    count++;
-                }
-            }
-        }
-        count = 0;
-        for (int i = 0; i < res2.size(); i++) {
-            if (res2.get(i) == null && count < res1Right.size()) {
-                if (res2.indexOf(res1Right.get(count)) == -1) {
-                    res2.set(i, res1Right.get(count));
-                    count++;
-                }
+        // Fill res1Child1 with res1Left without elemets res1LeftRight and rest of null
+        for (int i = 0; i < res1Left.size(); i++) {
+            if (res1LeftRight.indexOf(res1Left.get(i)) == -1) {
+                resChild1[i] = res1Left.get(i);
+            } else {
+                resChild1[i] = null;
             }
         }
 
-        // System.out.println(resChild1.length);
+        // Fill res1Child2 with res2Left without elemets res2LeftRight and rest of null
+        for (int i = 0; i < res2Left.size(); i++) {
+            if (res2LeftRight.indexOf(res2Left.get(i)) == -1) {
+                resChild2[i] = res2Left.get(i);
+            } else {
+                resChild2[i] = null;
+            }
+        }
 
-        // get element wich isnt in res1 but are in res1Save
-        // System.out.println(res1Save);
-        for (int i = 0; i < res1.size(); i++) {
-            if (res1.get(i) == null) {
-                for (int j = 0; j < res1Save.size(); j++) {
-                    if (res1.indexOf(res1Save.get(j)) == -1) {
-                        res1.set(i, res1Save.get(j));
-                    } else if (res1.indexOf(res2Save.get(j)) == -1) {
-                        res1.set(i, res2Save.get(j));
+        // Fill res1Child1 elements from res1 if are in res2LeftRight and set them on
+        // index from res1
+        for (int i = 0; i < res2LeftRight.size(); i++) {
+            if (res1.indexOf(res2LeftRight.get(i)) != -1) {
+                resChild1[res1.indexOf(res2LeftRight.get(i))] = res2LeftRight.get(i);
+            }
+        }
+
+        // Fill res1Child2 elements from res2 if are in res1LeftRight and set them on
+        // index from res2
+        for (int i = 0; i < res1LeftRight.size(); i++) {
+            if (res2.indexOf(res1LeftRight.get(i)) != -1) {
+                resChild2[res2.indexOf(res1LeftRight.get(i))] = res1LeftRight.get(i);
+            }
+        }
+
+        // Fill all null elements from res1Child1 with elements from res2Right which are
+        // in res1
+        for (int i = 0; i < resChild1.length; i++) {
+            if (resChild1[i] == null) {
+                for (int j = 0; j < res2Right.size(); j++) {
+                    if (res1.indexOf(res2Right.get(j)) != -1
+                            && Arrays.asList(resChild1).indexOf(res2Right.get(j)) == -1) {
+                        resChild1[i] = res2Right.get(j);
+                        break;
                     }
                 }
             }
         }
-        // // get element wich isnt in res2 but are in res2Save
-        for (int i = 0; i < res2.size(); i++) {
-            if (res2.get(i) == null) {
-                for (int j = 0; j < res2Save.size(); j++) {
-                    if (res2.indexOf(res2Save.get(j)) == -1) {
-                        res2.set(i, res2Save.get(j));
-                    } else if (res2.indexOf(res1Save.get(j)) == -1) {
-                        res2.set(i, res1Save.get(j));
+
+        // Fill all null elements from res1Child2 with elements from res1Right which are
+        // in res2
+        for (int i = 0; i < resChild2.length; i++) {
+            if (resChild2[i] == null) {
+                for (int j = 0; j < res1Right.size(); j++) {
+                    if (res2.indexOf(res1Right.get(j)) != -1
+                            && Arrays.asList(resChild2).indexOf(res1Right.get(j)) == -1) {
+                        resChild2[i] = res1Right.get(j);
+                        break;
                     }
                 }
             }
         }
-        System.out.println("res1: " + res1);
-        System.out.println("res2: " + res2);
-        // Move elements from res1 and res2 to resChild1 and resChild2
-        for (int i = 0; i < res1.size(); i++) {
-            resChild1[i] = res1.get(i);
+
+        // Fill all null elements from res1Child1 with elements from res1 if are'n in
+        // res1Child1 on correct index
+        for (int i = 0; i < resChild1.length; i++) {
+            if (resChild1[i] == null) {
+                for (int j = 0; j < res1.size(); j++) {
+                    if (Arrays.asList(resChild1).indexOf(res1.get(j)) == -1) {
+                        resChild1[i] = res1.get(j);
+                        break;
+                    }
+                }
+            }
         }
-        for (int i = 0; i < res2.size(); i++) {
-            resChild2[i] = res2.get(i);
+
+        // Fill all null elements from res1Child2 with elements from res2 if are'n in
+        // res1Child2 on correct index
+        for (int i = 0; i < resChild2.length; i++) {
+            if (resChild2[i] == null) {
+                for (int j = 0; j < res2.size(); j++) {
+                    if (Arrays.asList(resChild2).indexOf(res2.get(j)) == -1) {
+                        resChild2[i] = res2.get(j);
+                        break;
+                    }
+                }
+            }
         }
+
         Specimen child1 = new Specimen();
         child1.setResult(Arrays.asList(resChild1));
         child1.setCost(Specimen.cost(Arrays.asList(resChild1), costMatrix));
