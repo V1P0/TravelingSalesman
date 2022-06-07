@@ -44,11 +44,11 @@ public class GeneticTest {
                 DistanceMatrix berlin = new DistanceMatrix(TSPLoader.returnScanner(new File("data/a280.tsp")));
                 List<Integer> result = berlin.island_genetic(
                                 new Population[] {
-                                                Population.getRandomPopulation(48, berlin.matrix),
-                                                Population.getTwoOptedPopulation(48, berlin, 0.2),
-                                                Population.getTwoOptedPopulation(48, berlin, 0.6),
-                                                Population.getRandomPopulation(48, berlin.matrix),
-                                                Population.getTwoOptedPopulation(48, berlin, 0.1)
+                                        Population.getRandomPopulation(48, berlin.matrix),
+                                        new Population(Population.getNearestNeighbourPopulation(4, berlin), Population.getTwoOptedPopulation(4, berlin), Population.getRandomPopulation(40, berlin.matrix)),
+                                        new Population(Population.getNearestNeighbourPopulation(8, berlin), Population.getTwoOptedPopulation(2, berlin), Population.getRandomPopulation(38, berlin.matrix)),
+                                        Population.getRandomPopulation(48, berlin.matrix),
+                                        new Population(Population.getNearestNeighbourPopulation(2, berlin), Population.getTwoOptedPopulation(8, berlin), Population.getRandomPopulation(38, berlin.matrix))
                                 },
                                 new Mutator[] {
                                                 new RandomSwapMutator(),
@@ -105,8 +105,8 @@ public class GeneticTest {
                                 new BagMutator(
                                                 new BestReverseMutator(),
                                                 new RandomSwapMutator()),
-                                new MOCCrossover(),
-                                new NaturalKiller(),
+                                new CXCrossover(),
+                                new RouletteKiller(),
                                 0.3,
                                 3000);
                 System.out.println(x.getSpecimens().size());
@@ -134,7 +134,7 @@ public class GeneticTest {
                  * System.out.println(x.getSpecimens().size());
                  * System.out.println(berlin.cost(result));
                  */
-                x.setCrossover(new PMXCrossover());
+                x.setCrossover(new MOCCrossover());
                 x.crossover();
                 for (Specimen s : x.getSpecimens()) {
                         for (int i : s.getResult()) {

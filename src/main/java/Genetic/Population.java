@@ -34,24 +34,43 @@ public class Population implements Cloneable{
         return pop;
     }
 
-    public static Population getTwoOptedPopulation(int size, DistanceMatrix dm, double twoOptPercent){
-        int[][] costMatrix = dm.matrix;
-        int twoOptSize = (int)(size*twoOptPercent);
+    public static Population getTwoOptedPopulation(int size, DistanceMatrix dm){
         Population pop = new Population();
         pop.expectedSize = size;
-        pop.costMatrix = costMatrix;
-        pop.overallBest = Specimen.getRandomSpecimen(costMatrix);
-        for(int i = 0; i < twoOptSize; i++){
-            Specimen rand = Specimen.getRandomSpecimen(costMatrix);
-            List<Integer> newResult = dm.twoOptAcc(rand.getResult());
-            rand.setResult(newResult);
-            rand.setCost(Specimen.cost(newResult, costMatrix));
-            pop.getSpecimens().add(rand);
-        }
-        for(int i = twoOptSize; i< size; i++){
-            pop.getSpecimens().add(Specimen.getRandomSpecimen(costMatrix));
+        pop.costMatrix = dm.matrix;
+        pop.overallBest = Specimen.getRandomSpecimen(pop.costMatrix);
+        for(int i = 0; i < size; i++){
+            Specimen s = Specimen.getRandomSpecimen(pop.costMatrix);
+            s.setResult(dm.twoOptAcc(s.getResult()));
+            s.setCost(Specimen.cost(s.getResult(), pop.costMatrix));
+            pop.getSpecimens().add(s);
         }
         return pop;
+    }
+
+    public static Population getNearestNeighbourPopulation(int size, DistanceMatrix dm){
+        Population pop = new Population();
+        pop.expectedSize = size;
+        pop.costMatrix = dm.matrix;
+        pop.overallBest = Specimen.getRandomSpecimen(pop.costMatrix);
+        for(int i = 0; i < size; i++){
+            Specimen s = Specimen.getRandomSpecimen(pop.costMatrix);
+            s.setResult(dm.nearest(i%dm.matrix.length));
+            s.setCost(Specimen.cost(s.getResult(), pop.costMatrix));
+            pop.getSpecimens().add(s);
+        }
+        return pop;
+    }
+
+    public Population(Population... populations){
+        this();
+        this.costMatrix = populations[0].costMatrix;
+        this.expectedSize = 0;
+        for(Population p : populations){
+            this.expectedSize += p.getSpecimens().size();
+            this.getSpecimens().addAll(p.getSpecimens());
+        }
+        this.overallBest = this.getBestSpecimen();
     }
 
     public List<Specimen> getSpecimens() {
