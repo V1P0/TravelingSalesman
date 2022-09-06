@@ -25,20 +25,23 @@ public class Dawaj55 {
         PrintWriter pwch = new PrintWriter("ch.csv");
         PrintWriter pwa = new PrintWriter("a.csv");
         PrintWriter pwr = new PrintWriter("r.csv");
-        Crossover[] crossovers = new Crossover[]{new PMXCrossover(), new OXCrossover(), new CXCrossover(), new MOCCrossover()};
-        Mutator[] mutators = new Mutator[]{new RandomSwapMutator(), new BestReverseMutator(), new TwoOptMutator(), new BagMutator(new RandomSwapMutator(), new BestReverseMutator(), new TwoOptMutator())};
-        Killer[] killers = new Killer[]{new NaturalKiller(), new PureCostStagnationKiller(), new RouletteKiller(), new TournamentKiller()};
-        double[] probabilities = new double[]{0.3, 0.4, 0.5};
-        int[] sizes = new int[]{30, 50, 70};
+        Crossover[] crossovers = new Crossover[] { new PMXCrossover(), new OXCrossover(), new CXCrossover(),
+                new MOCCrossover() };
+        Mutator[] mutators = new Mutator[] { new RandomSwapMutator(), new BestReverseMutator(), new TwoOptMutator(),
+                new BagMutator(new RandomSwapMutator(), new BestReverseMutator(), new TwoOptMutator()) };
+        Killer[] killers = new Killer[] { new NaturalKiller(), new PureCostStagnationKiller(), new RouletteKiller(),
+                new TournamentKiller() };
+        double[] probabilities = new double[] { 0.3, 0.4, 0.5 };
+        int[] sizes = new int[] { 30, 50, 70 };
         long time = 20000;
-        Thread t1 = new Thread(()->{
+        Thread t1 = new Thread(() -> {
             DistanceMatrix dm = att;
             PrintWriter pw = pwatt;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -46,8 +49,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -55,14 +60,14 @@ public class Dawaj55 {
             }
         });
         t1.start();
-        Thread t2 = new Thread(()->{
+        Thread t2 = new Thread(() -> {
             DistanceMatrix dm = berlin;
             PrintWriter pw = pwberlin;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -70,8 +75,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -79,14 +86,14 @@ public class Dawaj55 {
             }
         });
         t2.start();
-        Thread t3 = new Thread(()->{
+        Thread t3 = new Thread(() -> {
             DistanceMatrix dm = bier;
             PrintWriter pw = pwbier;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -94,8 +101,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -103,14 +112,14 @@ public class Dawaj55 {
             }
         });
         t3.start();
-        Thread t4 = new Thread(()->{
+        Thread t4 = new Thread(() -> {
             DistanceMatrix dm = ch;
             PrintWriter pw = pwch;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -118,8 +127,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -127,14 +138,14 @@ public class Dawaj55 {
             }
         });
         t4.start();
-        Thread t5 = new Thread(()->{
+        Thread t5 = new Thread(() -> {
             DistanceMatrix dm = a;
             PrintWriter pw = pwa;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -142,8 +153,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -151,14 +164,14 @@ public class Dawaj55 {
             }
         });
         t5.start();
-        Thread t6 = new Thread(()->{
+        Thread t6 = new Thread(() -> {
             DistanceMatrix dm = r;
             PrintWriter pw = pwr;
-            for(Crossover c : crossovers){
-                for(Mutator m : mutators){
-                    for(Killer k : killers){
-                        for(double p : probabilities){
-                            for(int si:sizes){
+            for (Crossover c : crossovers) {
+                for (Mutator m : mutators) {
+                    for (Killer k : killers) {
+                        for (double p : probabilities) {
+                            for (int si : sizes) {
                                 Population pop = Population.getRandomPopulation(si, dm.matrix);
                                 long cost = dm.cost(dm.genetic(pop,
                                         m,
@@ -166,8 +179,10 @@ public class Dawaj55 {
                                         k,
                                         p,
                                         time));
-                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
-                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                pw.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName() + ","
+                                        + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
+                                System.out.println(c.getClass().getSimpleName() + "," + m.getClass().getSimpleName()
+                                        + "," + k.getClass().getSimpleName() + "," + p + "," + si + "," + cost);
                             }
                         }
                     }
@@ -181,5 +196,12 @@ public class Dawaj55 {
         t4.join();
         t5.join();
         t6.join();
+        pwatt.close();
+        pwberlin.close();
+        pwbier.close();
+        pwch.close();
+        pwa.close();
+        pwr.close();
+
     }
 }
